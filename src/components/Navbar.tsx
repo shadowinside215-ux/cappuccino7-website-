@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, Globe } from 'lucide-react';
+import { useTranslation, Language } from '../lib/i18n';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { lang, setLang, t } = useTranslation();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -13,11 +15,17 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: '#' },
-    { name: 'About', href: '#about' },
-    { name: 'Menu', href: '#menu' },
-    { name: 'Location', href: '#location' },
-    { name: 'Contact', href: '#contact' },
+    { name: t('nav.home'), href: '#' },
+    { name: t('nav.about'), href: '#about' },
+    { name: t('nav.menu'), href: '#menu' },
+    { name: t('nav.gallery'), href: '#gallery' },
+    { name: t('nav.contact'), href: '#location' },
+  ];
+
+  const languages: { code: Language; label: string }[] = [
+    { code: 'en', label: 'EN' },
+    { code: 'fr', label: 'FR' },
+    { code: 'ar', label: 'AR' },
   ];
 
   return (
@@ -44,16 +52,47 @@ export default function Navbar() {
               {link.name}
             </a>
           ))}
+          
+          <div className="flex items-center space-x-2 border-l border-beige-light pl-6">
+            <Globe size={14} className="text-coffee-brown" />
+            <div className="flex space-x-2">
+              {languages.map((l) => (
+                <button
+                  key={l.code}
+                  onClick={() => setLang(l.code)}
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded transition-all ${
+                    lang === l.code ? 'bg-coffee-brown text-white' : 'text-espresso-dark hover:text-coffee-brown'
+                  }`}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <a
             href="tel:+212777305155"
             className="flex items-center space-x-2 bg-coffee-brown text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-espresso-dark transition-all"
           >
             <Phone size={16} />
-            <span>Call Us</span>
+            <span>{lang === 'ar' ? 'اتصل بنا' : lang === 'fr' ? 'Appelez-nous' : 'Call Us'}</span>
           </a>
         </div>
 
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center space-x-4">
+          <div className="flex space-x-1">
+            {languages.map((l) => (
+              <button
+                key={l.code}
+                onClick={() => setLang(l.code)}
+                className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                  lang === l.code ? 'bg-coffee-brown text-white' : 'text-espresso-dark bg-white/50'
+                }`}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
           <button id="mobile-menu-button" onClick={() => setIsOpen(!isOpen)} className="text-espresso-dark">
             {isOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
@@ -85,7 +124,7 @@ export default function Navbar() {
                 className="flex items-center justify-center space-x-2 bg-coffee-brown text-white w-full py-3 rounded-xl"
               >
                 <Phone size={18} />
-                <span>Call Us Now</span>
+                <span>{lang === 'ar' ? 'اتصل بنا الآن' : lang === 'fr' ? 'Appelez-nous' : 'Call Us Now'}</span>
               </a>
             </div>
           </motion.div>

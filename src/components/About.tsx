@@ -5,6 +5,7 @@ import { useDocument } from '../lib/hooks';
 import { auth, db } from '../lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { uploadImage } from '../lib/cloudinary';
+import { useTranslation } from '../lib/i18n';
 
 export default function About() {
   const { data: settings, loading } = useDocument<any>('settings', 'global');
@@ -14,6 +15,7 @@ export default function About() {
   const [tempAuthor, setTempAuthor] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const { t, isRTL } = useTranslation();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -29,10 +31,10 @@ export default function About() {
   }
 
   const stats = [
-    { icon: <Star className="text-coffee-brown" />, value: '4.8', label: 'Average Rating' },
-    { icon: <Users className="text-coffee-brown" />, value: '2.8k+', label: 'Happy Guests' },
-    { icon: <Clock className="text-coffee-brown" />, value: '15h', label: 'Daily Service' },
-    { icon: <Coffee className="text-coffee-brown" />, value: '50+', label: 'Menu Items' },
+    { icon: <Star className="text-coffee-brown" />, value: '4.8', label: t('about.stat1') },
+    { icon: <Users className="text-coffee-brown" />, value: '2.8k+', label: t('about.stat2') },
+    { icon: <Clock className="text-coffee-brown" />, value: '15h', label: 'Service' },
+    { icon: <Coffee className="text-coffee-brown" />, value: '50+', label: t('about.stat3') },
   ];
 
   const handleSaveNote = async () => {
@@ -67,35 +69,31 @@ export default function About() {
     }
   };
 
-  const quote = settings?.atmosphereQuote || "The atmosphere here is unmatched in Salé. Truly a hidden gem.";
+  const quote = settings?.atmosphereQuote || t('gallery.title');
   const author = settings?.atmosphereAuthor || "— Regular Guest";
   const atmosphereImage = settings?.atmosphereImage || "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800";
 
   return (
     <section id="about" className="py-24 px-4 bg-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-16 items-center ${isRTL ? 'text-right' : 'text-left'}`}>
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: isRTL ? 50 : -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
             <span className="text-coffee-brown font-medium uppercase tracking-widest text-sm mb-4 block">
-              Our Story
+              {t('nav.about')}
             </span>
             <h2 className="font-serif text-4xl md:text-5xl font-bold mb-8 text-espresso-dark">
-              A Warm Sanctuary <br /> for Coffee Lovers
+              {t('about.title')}
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed mb-8 font-light">
-              Located in the heart of Taha Palace, Salé, Cappuccino 7 is more than just a café. 
-              It's a welcoming space designed for people who appreciate the finer things in life: 
-              a perfectly brewed espresso, fresh artisanal crepes, and a relaxing vibe.
+              {t('about.p1')}
             </p>
             <p className="text-gray-600 text-lg leading-relaxed mb-12 font-light">
-              Whether you're starting your morning with a traditional Moroccan breakfast 
-              or winding down in the evening, our friendly staff is here to make your 
-              experience memorable.
+              {t('about.p2')}
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">

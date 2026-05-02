@@ -5,12 +5,14 @@ import { useDocument } from '../lib/hooks';
 import { auth, db } from '../lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { uploadImage } from '../lib/cloudinary';
+import { useTranslation } from '../lib/i18n';
 
 export default function Hero() {
   const { data: settings, loading } = useDocument<any>('settings', 'global');
   const [isAdmin, setIsAdmin] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const { t, lang } = useTranslation();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -43,8 +45,8 @@ export default function Hero() {
     </div>;
   }
 
-  const title = settings?.heroTitle || 'The Best Coffee Experience in Salé';
-  const subtitle = settings?.heroSubtitle || 'Welcome to Cappuccino 7, where every cup tells a story of quality, comfort, and authentic Moroccan atmosphere.';
+  const title = settings?.heroTitle || t('hero.title');
+  const subtitle = settings?.heroSubtitle || t('hero.subtitle');
   const image = settings?.heroImage || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1920';
 
   return (
@@ -98,14 +100,14 @@ export default function Hero() {
               href="#menu"
               className="bg-coffee-brown text-white px-10 py-4 rounded-full text-lg font-medium hover:bg-espresso-dark transition-all transform hover:scale-105"
             >
-              View Menu
+              {t('hero.cta')}
             </a>
             <a
               id="hero-cta-location"
               href="#location"
               className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-4 rounded-full text-lg font-medium hover:bg-white/20 transition-all transform hover:scale-105"
             >
-              Visit Us
+              {lang === 'ar' ? 'موقعنا' : lang === 'fr' ? 'Nous trouver' : 'Visit Us'}
             </a>
           </div>
         </motion.div>

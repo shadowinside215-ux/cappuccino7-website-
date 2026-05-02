@@ -14,6 +14,7 @@ import Gallery from './components/Gallery';
 import LocationAndContact from './components/Location';
 import Footer from './components/Footer';
 import AdminDashboard from './components/Admin/AdminDashboard';
+import { I18nProvider } from './lib/i18n';
 
 export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
@@ -28,21 +29,23 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen selection:bg-coffee-brown selection:text-white">
-      {isAdminOpen && <AdminDashboard onClose={() => setIsAdminOpen(false)} />}
-      
-      <Navbar />
-      <main>
-        <Hero />
-        <About />
-        <MenuSection />
-        <Services />
-        <Gallery />
-        <Reviews />
-        <LocationAndContact />
-      </main>
-      <Footer />
-    </div>
+    <I18nProvider>
+      <div className="min-h-screen selection:bg-coffee-brown selection:text-white">
+        {isAdminOpen && <AdminDashboard onClose={() => setIsAdminOpen(false)} />}
+        
+        <Navbar />
+        <main>
+          <Hero />
+          <About />
+          <MenuSection />
+          <Services />
+          <Gallery />
+          <Reviews />
+          <LocationAndContact />
+        </main>
+        <Footer />
+      </div>
+    </I18nProvider>
   );
 }
 
