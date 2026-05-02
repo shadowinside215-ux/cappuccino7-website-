@@ -7,7 +7,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { uploadImage } from '../lib/cloudinary';
 
 export default function About() {
-  const { data: settings } = useDocument<any>('settings', 'global');
+  const { data: settings, loading } = useDocument<any>('settings', 'global');
   const [isAdmin, setIsAdmin] = useState(false);
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [tempNote, setTempNote] = useState('');
@@ -21,6 +21,12 @@ export default function About() {
     });
     return () => unsubscribe();
   }, []);
+
+  if (loading) {
+    return <div className="py-24 px-4 bg-white flex items-center justify-center">
+      <div className="w-12 h-12 border-4 border-coffee-brown border-t-transparent rounded-full animate-spin" />
+    </div>;
+  }
 
   const stats = [
     { icon: <Star className="text-coffee-brown" />, value: '4.8', label: 'Average Rating' },

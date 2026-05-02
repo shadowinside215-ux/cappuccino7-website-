@@ -1,8 +1,47 @@
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
+import { Camera } from 'lucide-react';
 import { useDocument } from '../lib/hooks';
+import { auth, db } from '../lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { uploadImage } from '../lib/cloudinary';
 
 export default function Hero() {
-  const { data: settings } = useDocument<any>('settings', 'global');
+  const { data: settings, loading } = useDocument<any>('settings', 'global');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsAdmin(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleImageUpload = async (e: any) => {
+    const file = e.target.files?.[0];
+    const cloudName = localStorage.getItem('cl_name') || process.env.VITE_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = localStorage.getItem('cl_preset') || process.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+    if (!file || !cloudName || !uploadPreset) return alert('Cloudinary settings missing in Admin Dashboard');
+
+    setIsUploading(true);
+    try {
+      const url = await uploadImage(file, cloudName, uploadPreset);
+      await setDoc(doc(db, 'settings', 'global'), { ...settings, heroImage: url }, { merge: true });
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="h-screen bg-espresso-dark flex items-center justify-center">
+      <div className="w-12 h-12 border-4 border-coffee-brown border-t-transparent rounded-full animate-spin" />
+    </div>;
+  }
 
   const title = settings?.heroTitle || 'The Best Coffee Experience in Salé';
   const subtitle = settings?.heroSubtitle || 'Welcome to Cappuccino 7, where every cup tells a story of quality, comfort, and authentic Moroccan atmosphere.';
@@ -14,11 +53,29 @@ export default function Hero() {
         <img
           src={image}
           alt="Cappuccino 7 Cafe"
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'}`}
           referrerPolicy="no-referrer"
         />
         <div className="absolute inset-0 bg-espresso-dark/40" />
+        
+        {isAdmin && (
+          <div 
+            onClick={() => fileRef.current?.click()}
+            className="absolute inset-0 bg-black/20 flex flex-col items-center justify-center cursor-pointer opacity-0 hover:opacity-100 transition-all text-white z-10"
+          >
+            <Camera size={48} />
+            <span className="text-sm font-bold uppercase tracking-widest mt-4">Change Hero Background</span>
+          </div>
+        )}
       </div>
+
+      <input 
+        ref={fileRef}
+        type="file" 
+        className="hidden" 
+        onChange={handleImageUpload} 
+        accept="image/*"
+      />
 
       <div className="relative z-10 text-center max-w-4xl px-4">
         <motion.div

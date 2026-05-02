@@ -8,7 +8,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { uploadImage } from '../lib/cloudinary';
 
 export default function Gallery() {
-  const { data: settings } = useDocument<any>('settings', 'global');
+  const { data: settings, loading } = useDocument<any>('settings', 'global');
   const [isAdmin, setIsAdmin] = useState(false);
   const [isUploading, setIsUploading] = useState<number | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -20,6 +20,12 @@ export default function Gallery() {
     });
     return () => unsubscribe();
   }, []);
+
+  if (loading) {
+    return <div className="py-24 px-4 bg-white flex items-center justify-center">
+      <div className="w-12 h-12 border-4 border-coffee-brown border-t-transparent rounded-full animate-spin" />
+    </div>;
+  }
   
   const images = settings?.galleryImages?.length > 0 
     ? settings.galleryImages.map((url: string, i: number) => ({ id: i.toString(), url, alt: `Gallery ${i}` }))
