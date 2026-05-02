@@ -11,7 +11,44 @@ import {
   DocumentData,
   orderBy
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { db, auth } from './firebase';
+
+export enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId?: string | null;
+    email?: string | null;
+    emailVerified?: boolean | null;
+    isAnonymous?: boolean | null;
+  }
+}
+
+function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errInfo: FirestoreErrorInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: auth.currentUser?.uid,
+      email: auth.currentUser?.email,
+      emailVerified: auth.currentUser?.emailVerified,
+      isAnonymous: auth.currentUser?.isAnonymous,
+    },
+    operationType,
+    path
+  };
+  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  throw new Error(JSON.stringify(errInfo));
+}
 
 export function useCollection<T = DocumentData>(path: string, orderField?: string) {
   const [data, setData] = useState<T[]>([]);
@@ -31,7 +68,7 @@ export function useCollection<T = DocumentData>(path: string, orderField?: strin
       setData(items);
       setLoading(false);
     }, (err) => {
-      console.error(err);
+      handleFirestoreError(err, OperationType.LIST, path);
       setError(err as Error);
       setLoading(false);
     });
@@ -52,6 +89,9 @@ export function useDocument<T = DocumentData>(path: string, id: string) {
         setData({ id: snapshot.id, ...snapshot.data() } as T);
       }
       setLoading(false);
+    }, (err) => {
+      handleFirestoreError(err, OperationType.GET, `${path}/${id}`);
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -61,13 +101,25 @@ export function useDocument<T = DocumentData>(path: string, id: string) {
 }
 
 export async function addDocument(path: string, id: string, data: any) {
-  await setDoc(doc(db, path, id), data);
+  try {
+    await setDoc(doc(db, path, id), data);
+  } catch (err) {
+    handleFirestoreError(err, OperationType.CREATE, `${path}/${id}`);
+  }
 }
 
 export async function updateDocument(path: string, id: string, data: any) {
-  await updateDoc(doc(db, path, id), data);
+  try {
+    await updateDoc(doc(db, path, id), data);
+  } catch (err) {
+    handleFirestoreError(err, OperationType.UPDATE, `${path}/${id}`);
+  }
 }
 
 export async function removeDocument(path: string, id: string) {
-  await deleteDoc(doc(db, path, id));
+  try {
+    await deleteDoc(doc(db, path, id));
+  } catch (err) {
+    handleFirestoreError(err, OperationType.DELETE, `${path}/${id}`);
+  }
 }

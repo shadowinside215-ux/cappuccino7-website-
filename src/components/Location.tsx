@@ -35,9 +35,9 @@ export default function LocationAndContact() {
                   <Phone size={24} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-espresso-dark uppercase tracking-widest text-sm mb-1">WhatsApp Us</h4>
+                  <h4 className="font-bold text-espresso-dark uppercase tracking-widest text-sm mb-1">Call Us</h4>
                   <p className="text-gray-600 font-light">
-                    <a href="https://wa.me/212777305155" target="_blank" rel="noopener noreferrer" className="hover:text-coffee-brown transition-colors">
+                    <a href="tel:+212777305155" className="hover:text-coffee-brown transition-colors">
                       +212 7 77 30 51 55
                     </a>
                   </p>
@@ -45,15 +45,7 @@ export default function LocationAndContact() {
                 </div>
               </div>
 
-              <div className="flex items-start space-x-6">
-                <div className="bg-white p-4 rounded-2xl shadow-sm text-coffee-brown">
-                  <Mail size={24} />
-                </div>
-                <div>
-                  <h4 className="font-bold text-espresso-dark uppercase tracking-widest text-sm mb-1">Email</h4>
-                  <p className="text-gray-600 font-light">hello@cappuccino7.ma</p>
-                </div>
-              </div>
+
             </div>
 
             <div className="flex items-center space-x-4 mb-12">
@@ -76,15 +68,14 @@ export default function LocationAndContact() {
             </a>
           </motion.div>
 
-          {/* Map & Simple Form */}
+          {/* Map */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="flex flex-col gap-8"
+            className="flex flex-col gap-8 h-full"
           >
-            {/* Embedded Map Placeholder (Since I can't embed real interactive maps easily without API keys, I'll use a stylized iframe or visual) */}
-            <div className="w-full aspect-[16/9] bg-white rounded-[32px] overflow-hidden shadow-inner border border-beige-light group relative">
+            <div className="w-full h-full bg-white rounded-[32px] overflow-hidden shadow-inner border border-beige-light group relative min-h-[400px]">
               <iframe 
                 width="100%" 
                 height="100%" 
@@ -97,35 +88,6 @@ export default function LocationAndContact() {
                 className="grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
               />
               <div className="absolute inset-0 pointer-events-none border-[12px] border-white rounded-[32px]" />
-            </div>
-
-            <div id="contact" className="bg-white p-8 rounded-[32px] shadow-sm">
-              <h3 className="font-serif text-2xl font-bold text-espresso-dark mb-6">Send us a message</h3>
-              <form className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input 
-                    type="text" 
-                    placeholder="Your Name" 
-                    className="w-full px-5 py-3 rounded-xl bg-warm-bg border-none outline-none focus:ring-2 focus:ring-coffee-brown/20 text-sm"
-                  />
-                  <input 
-                    type="email" 
-                    placeholder="Your Email" 
-                    className="w-full px-5 py-3 rounded-xl bg-warm-bg border-none outline-none focus:ring-2 focus:ring-coffee-brown/20 text-sm"
-                  />
-                </div>
-                <textarea 
-                  rows={4} 
-                  placeholder="Your Message" 
-                  className="w-full px-5 py-3 rounded-xl bg-warm-bg border-none outline-none focus:ring-2 focus:ring-coffee-brown/20 text-sm resize-none"
-                />
-                <button 
-                  type="submit" 
-                  className="w-full bg-coffee-brown text-white py-4 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-espresso-dark transition-all"
-                >
-                  Message Us
-                </button>
-              </form>
             </div>
           </motion.div>
         </div>

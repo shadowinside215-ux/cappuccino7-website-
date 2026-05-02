@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { LogOut, Plus, Trash2, Edit2, Upload, Save, X, Image as ImageIcon, Coffee, Grid, Settings as SettingsIcon } from 'lucide-react';
+import { LogOut, Plus, Trash2, Edit2, Upload, Save, X, Image as ImageIcon, Coffee, Grid, Settings as SettingsIcon, Lock } from 'lucide-react';
 import { doc, setDoc } from 'firebase/firestore';
-import { auth, loginWithGoogle, logout, db } from '../../lib/firebase';
+import { auth, loginAnonymously, logout, db } from '../../lib/firebase';
 import { useCollection, useDocument, addDocument, updateDocument, removeDocument } from '../../lib/hooks';
 import { uploadImage } from '../../lib/cloudinary';
 import { MenuItem } from '../../types';
@@ -11,38 +11,96 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
   const [user, setUser] = useState(auth.currentUser);
   const [activeTab, setActiveTab] = useState<'menu' | 'gallery' | 'settings'>('menu');
   const [isUploading, setIsUploading] = useState(false);
+  const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+  const [error, setError] = useState('');
   
   // Cloudinary config stored in local storage for simplicity (or we could fetch from settings)
-  const [cloudName, setCloudName] = useState(localStorage.getItem('cl_name') || '');
-  const [uploadPreset, setUploadPreset] = useState(localStorage.getItem('cl_preset') || '');
+  const [cloudName, setCloudName] = useState(
+    localStorage.getItem('cl_name') || 
+    process.env.VITE_CLOUDINARY_CLOUD_NAME || 
+    ''
+  );
+  const [uploadPreset, setUploadPreset] = useState(
+    localStorage.getItem('cl_preset') || 
+    process.env.VITE_CLOUDINARY_UPLOAD_PRESET || 
+    ''
+  );
 
   const { data: menuItems } = useCollection<MenuItem>('menuItems', 'order');
   const { data: settings } = useDocument<any>('settings', 'global');
 
+  const handleLogin = async (e: any) => {
+    e.preventDefault();
+    setError('');
+    
+    if (loginForm.username === 'admin' && loginForm.password === 'admin2000') {
+      try {
+        const u = await loginAnonymously();
+        setUser(u);
+      } catch (err) {
+        setError('Connection error. Please try again.');
+      }
+    } else {
+      setError('Invalid username or password.');
+    }
+  };
+
   if (!user) {
     return (
       <div className="fixed inset-0 z-[100] bg-espresso-dark flex items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-[40px] max-w-md w-full text-center">
-          <h2 className="font-serif text-3xl font-bold mb-6 text-espresso-dark">Admin Access</h2>
-          <p className="text-gray-500 mb-8">Please sign in with your authorized Google account to manage Cappuccino 7.</p>
-          <button 
-            onClick={async () => {
-              const u = await loginWithGoogle();
-              if (u?.email === 'dragonballsam86@gmail.com') {
-                setUser(u);
-              } else {
-                alert('Unauthorized account.');
-                await logout();
-              }
-            }}
-            className="w-full bg-coffee-brown text-white py-4 rounded-2xl font-bold uppercase tracking-widest hover:bg-espresso-dark transition-all"
-          >
-            Sign in with Google
-          </button>
-          <button onClick={onClose} className="mt-4 text-gray-400 hover:text-espresso-dark text-sm underline uppercase tracking-widest">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white p-8 rounded-[40px] max-w-md w-full"
+        >
+          <div className="text-center mb-8">
+            <div className="bg-warm-bg w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Lock className="text-coffee-brown" size={24} />
+            </div>
+            <h2 className="font-serif text-3xl font-bold text-espresso-dark">Admin Access</h2>
+            <p className="text-gray-500 text-sm mt-2">Enter your credentials to manage the website.</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block">Username</label>
+              <input 
+                type="text"
+                value={loginForm.username}
+                onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
+                className="w-full bg-warm-bg px-5 py-4 rounded-2xl outline-none focus:ring-2 focus:ring-coffee-brown/20 transition-all font-medium"
+                placeholder="Enter name"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block">Password</label>
+              <input 
+                type="password"
+                value={loginForm.password}
+                onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                className="w-full bg-warm-bg px-5 py-4 rounded-2xl outline-none focus:ring-2 focus:ring-coffee-brown/20 transition-all font-medium"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+            
+            {error && (
+              <p className="text-red-500 text-xs font-bold text-center">{error}</p>
+            )}
+
+            <button 
+              type="submit"
+              className="w-full bg-coffee-brown text-white py-4 rounded-2xl font-bold uppercase tracking-widest hover:bg-espresso-dark transition-all shadow-lg hover:shadow-coffee-brown/20 active:scale-[0.98]"
+            >
+              Sign In
+            </button>
+          </form>
+
+          <button onClick={onClose} className="w-full mt-6 text-gray-400 hover:text-espresso-dark text-[10px] font-bold uppercase tracking-widest transition-colors">
             Back to Website
           </button>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -65,7 +123,7 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-xs font-bold text-gray-400 hidden sm:block uppercase tracking-widest">{user.email}</span>
+          <span className="text-xs font-bold text-gray-400 hidden sm:block uppercase tracking-widest">Administrator</span>
           <button onClick={onClose} className="p-2 hover:bg-warm-bg rounded-lg text-gray-400 hover:text-espresso-dark transition-all">
             <X size={24} />
           </button>

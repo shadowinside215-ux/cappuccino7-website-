@@ -45,11 +45,11 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="https://wa.me/212777305155"
+            href="tel:+212777305155"
             className="flex items-center space-x-2 bg-coffee-brown text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-espresso-dark transition-all"
           >
             <Phone size={16} />
-            <span>WhatsApp</span>
+            <span>Call Us</span>
           </a>
         </div>
 
@@ -81,11 +81,11 @@ export default function Navbar() {
                 </a>
               ))}
               <a
-                href="https://wa.me/212777305155"
+                href="tel:+212777305155"
                 className="flex items-center justify-center space-x-2 bg-coffee-brown text-white w-full py-3 rounded-xl"
               >
                 <Phone size={18} />
-                <span>WhatsApp Us</span>
+                <span>Call Us Now</span>
               </a>
             </div>
           </motion.div>

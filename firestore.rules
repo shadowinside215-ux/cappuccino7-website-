@@ -1,41 +1,53 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Global Safety Net
     match /{document=**} {
       allow read, write: if false;
     }
 
+    // Global Helpers
     function isSignedIn() {
       return request.auth != null;
     }
 
     function isAdmin() {
-      return isSignedIn() && 
-             request.auth.token.email == 'dragonballsam86@gmail.com' && 
-             request.auth.token.email_verified == true;
+      // In this specific app, admin access is granted to anyone who signs in 
+      // (authenticated via the frontend name/password gate + signInAnonymously)
+      return isSignedIn();
     }
 
     function isValidId(id) {
       return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
     }
 
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Menu Items
     match /menuItems/{itemId} {
       allow read: if true;
-      allow create, update: if isAdmin() && isValidMenuItem(request.resource.data);
+      allow create: if isAdmin() && isValidId(itemId) && isValidMenuItem(incoming());
+      allow update: if isAdmin() && isValidMenuItem(incoming());
       allow delete: if isAdmin();
     }
 
     function isValidMenuItem(data) {
       return data.keys().hasAll(['name', 'price', 'category', 'image']) &&
-             data.name is string && data.name.size() <= 100 &&
-             data.price is string && data.price.size() <= 20 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.price is string && data.price.size() > 0 && data.price.size() <= 50 &&
              data.category in ['Coffee', 'Breakfast', 'Crepes & Snacks', 'Juices'] &&
-             data.image is string && data.image.size() <= 1000;
+             data.image is string && data.image.size() <= 2000 &&
+             (!('description' in data) || (data.description is string && data.description.size() <= 1000)) &&
+             (!('order' in data) || (data.order is number));
     }
 
+    // Global Settings & Styles
     match /settings/{settingId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, update: if isAdmin() && isValidId(settingId);
+      allow delete: if isAdmin();
     }
   }
 }
