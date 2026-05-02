@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "MenuItem": {
+      "title": "Menu Item",
+      "description": "An item in the cafe menu",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "string" },
+        "category": { "type": "string", "enum": ["Coffee", "Breakfast", "Crepes & Snacks", "Juices"] },
+        "image": { "type": "string", "format": "uri" },
+        "order": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "price", "category", "image"]
+    },
+    "Setting": {
+      "title": "Site Setting",
+      "description": "Global UI configurations and dynamic assets",
+      "type": "object",
+      "properties": {
+        "heroImage": { "type": "string", "format": "uri" },
+        "heroTitle": { "type": "string" },
+        "heroSubtitle": { "type": "string" },
+        "galleryImages": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "/menuItems/{itemId}": {
+      "schema": "MenuItem",
+      "description": "Collection of coffee and food items"
+    },
+    "/settings/{settingId}": {
+      "schema": "Setting",
+      "description": "Site-wide configuration and hero/gallery image storage"
+    }
+  }
+}
