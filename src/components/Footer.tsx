@@ -1,3 +1,4 @@
+import { Instagram, Facebook } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
 
 export default function Footer() {
@@ -15,15 +16,6 @@ export default function Footer() {
             <p className="text-gray-500 max-w-sm font-light leading-relaxed mb-8">
               {t('about.p1')}
             </p>
-            <div className={`flex items-center space-x-8 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
-              <div>
-                <h5 className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400 mb-2">Social</h5>
-                <div className={`flex space-x-4 ${isRTL ? 'space-x-reverse' : ''}`}>
-                   <a href="https://www.instagram.com/cappuccino7.mahajsala?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="text-espresso-dark hover:text-coffee-brown transition-colors uppercase text-xs font-bold tracking-widest">Instagram</a>
-                   <a href="https://web.facebook.com/people/Cappuccino7Mahajsala/100069623504882/?locale=fr_FR&_rdc=1&_rdr#" target="_blank" rel="noopener noreferrer" className="text-espresso-dark hover:text-coffee-brown transition-colors uppercase text-xs font-bold tracking-widest">Facebook</a>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div>
