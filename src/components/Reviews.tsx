@@ -24,15 +24,15 @@ export default function Reviews() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {REVIEWS.map((review, idx) => (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.2 }}
+              transition={{ delay: (idx % 3) * 0.1 }}
               key={review.id}
-              className="bg-white/5 backdrop-blur-sm p-8 rounded-[32px] border border-white/10 flex flex-col h-full"
+              className="bg-white/5 backdrop-blur-sm p-8 rounded-[32px] border border-white/10 flex flex-col h-full hover:bg-white/10 transition-colors"
             >
               <Quote className="text-latte-cream mb-6" size={32} />
               <p className="text-white/80 text-lg leading-relaxed mb-10 flex-grow italic font-light">

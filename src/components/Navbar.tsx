@@ -30,7 +30,7 @@ export default function Navbar() {
     { code: 'ar', label: 'AR' },
   ];
 
-  const logoUrl = settings?.logoUrl || "/input_file_0.png";
+  const logoUrl = settings?.logoUrl || "/input_file_1.png";
 
   return (
     <nav

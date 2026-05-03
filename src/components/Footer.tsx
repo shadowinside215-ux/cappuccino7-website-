@@ -7,7 +7,7 @@ export default function Footer() {
   const { t, isRTL } = useTranslation();
   const { data: settings } = useDocument<any>('settings', 'global');
 
-  const logoUrl = settings?.logoUrl || "/input_file_0.png";
+  const logoUrl = settings?.logoUrl || "/input_file_1.png";
 
   return (
     <footer className={`bg-white border-t border-beige-light pt-20 pb-10 px-4 ${isRTL ? 'text-right' : 'text-left'}`}>

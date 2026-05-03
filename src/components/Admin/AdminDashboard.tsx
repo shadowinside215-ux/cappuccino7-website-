@@ -212,7 +212,7 @@ function LogoManager({ settings, cloudName, uploadPreset }: any) {
       <div className="flex flex-col md:flex-row gap-8 items-center">
         <div className="w-48 h-48 bg-warm-bg rounded-[32px] overflow-hidden relative group border border-beige-light flex items-center justify-center p-4">
           <img 
-            src={settings?.logoUrl || '/input_file_0.png'} 
+            src={settings?.logoUrl || '/input_file_1.png'} 
             className="max-w-full max-h-full object-contain" 
             referrerPolicy="no-referrer"
           />
