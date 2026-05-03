@@ -184,10 +184,62 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
              </section>
 
              <HeroManager settings={settings} cloudName={cloudName} uploadPreset={uploadPreset} />
+
+             <LogoManager settings={settings} cloudName={cloudName} uploadPreset={uploadPreset} />
           </div>
         )}
       </main>
     </div>
+  );
+}
+
+function LogoManager({ settings, cloudName, uploadPreset }: any) {
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleUpload = async (e: any) => {
+    const file = e.target.files?.[0];
+    if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
+    try {
+      const url = await uploadImage(file, cloudName, uploadPreset);
+      await setDoc(doc(db, 'settings', 'global'), { ...settings, logoUrl: url }, { merge: true });
+      alert('Logo updated successfully!');
+    } catch (err: any) { alert(err.message); }
+  };
+
+  return (
+    <section className="bg-white p-8 rounded-[32px] shadow-sm">
+      <h3 className="text-xl font-bold mb-8 font-serif">Branding & Logo</h3>
+      <div className="flex flex-col md:flex-row gap-8 items-center">
+        <div className="w-48 h-48 bg-warm-bg rounded-[32px] overflow-hidden relative group border border-beige-light flex items-center justify-center p-4">
+          <img 
+            src={settings?.logoUrl || '/input_file_0.png'} 
+            className="max-w-full max-h-full object-contain" 
+            referrerPolicy="no-referrer"
+          />
+          <div 
+            onClick={() => fileRef.current?.click()}
+            className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-all text-white"
+          >
+            <Upload />
+            <span className="text-[10px] font-bold uppercase mt-2">Change Logo</span>
+          </div>
+          <input ref={fileRef} type="file" className="hidden" onChange={handleUpload} />
+        </div>
+        <div className="flex-1">
+          <h4 className="font-bold text-espresso-dark mb-2">Website Logo</h4>
+          <p className="text-sm text-gray-500 font-light mb-4 leading-relaxed">
+            Upload your café's logo. This will be displayed in the navigation bar and footer. 
+            For best results, use a circular or square image with a transparent background if possible.
+          </p>
+          <button 
+            onClick={() => fileRef.current?.click()}
+            className="bg-coffee-brown text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-espresso-dark transition-all"
+          >
+            Upload New Logo
+          </button>
+        </div>
+      </div>
+    </section>
   );
 }
 

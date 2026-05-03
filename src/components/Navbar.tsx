@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Phone, Globe } from 'lucide-react';
 import { useTranslation, Language } from '../lib/i18n';
+import { useDocument } from '../lib/hooks';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { lang, setLang, t } = useTranslation();
+  const { data: settings } = useDocument<any>('settings', 'global');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -28,6 +30,8 @@ export default function Navbar() {
     { code: 'ar', label: 'AR' },
   ];
 
+  const logoUrl = settings?.logoUrl || "/input_file_0.png";
+
   return (
     <nav
       id="navbar"
@@ -37,8 +41,11 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <div className="flex items-center">
-          <a href="#" className="font-serif text-2xl md:text-3xl font-bold tracking-tight text-espresso-dark">
-            Cappuccino <span className="text-coffee-brown">7</span>
+          <a href="#" className="flex items-center space-x-3 group">
+            <img src={logoUrl} alt="Cappuccino 7 Logo" className="h-12 w-auto md:h-14 transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
+            <span className="font-serif text-xl md:text-2xl font-bold tracking-tight text-espresso-dark">
+              Cappuccino <span className="text-coffee-brown">7</span>
+            </span>
           </a>
         </div>
 

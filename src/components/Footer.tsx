@@ -1,17 +1,24 @@
 import { Instagram, Facebook } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
+import { useDocument } from '../lib/hooks';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const { t, isRTL } = useTranslation();
+  const { data: settings } = useDocument<any>('settings', 'global');
+
+  const logoUrl = settings?.logoUrl || "/input_file_0.png";
 
   return (
     <footer className={`bg-white border-t border-beige-light pt-20 pb-10 px-4 ${isRTL ? 'text-right' : 'text-left'}`}>
       <div className="max-w-7xl mx-auto">
         <div className={`grid grid-cols-1 md:grid-cols-4 gap-12 mb-20 ${isRTL ? 'md:grid-cols-4' : ''}`}>
           <div className="col-span-1 md:col-span-2">
-            <a href="#" className="font-serif text-3xl font-bold tracking-tight text-espresso-dark mb-6 block">
-              Cappuccino <span className="text-coffee-brown">7</span>
+            <a href="#" className="mb-8 flex items-center space-x-4">
+              <img src={logoUrl} alt="Cappuccino 7 Logo" className="h-16 w-auto" referrerPolicy="no-referrer" />
+              <span className="font-serif text-3xl font-bold tracking-tight text-espresso-dark">
+                Cappuccino <span className="text-coffee-brown">7</span>
+              </span>
             </a>
             <p className="text-gray-500 max-w-sm font-light leading-relaxed mb-8">
               {t('about.p1')}
