@@ -35,11 +35,11 @@ service cloud.firestore {
 
     function isValidMenuItem(data) {
       return data.keys().hasAll(['name', 'price', 'category', 'image']) &&
-             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
              data.price is string && data.price.size() > 0 && data.price.size() <= 50 &&
-             data.category in ['Coffee', 'Breakfast', 'Crepes & Snacks', 'Juices'] &&
+             data.category in ['Coffee', 'Breakfast', 'Brunch', 'Pizza', 'Crêpes Salées', 'Crêpes Sucrées', 'Gaufres', 'Pancakes', 'Juices', 'Loyalty'] &&
              data.image is string && data.image.size() <= 2000 &&
-             (!('description' in data) || (data.description is string && data.description.size() <= 1000)) &&
+             (!('description' in data) || (data.description is string && data.description.size() <= 2000)) &&
              (!('order' in data) || (data.order is number));
     }
 

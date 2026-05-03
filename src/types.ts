@@ -3,7 +3,7 @@ export interface MenuItem {
   name: string;
   description: string;
   price: string;
-  category: 'Coffee' | 'Breakfast' | 'Crepes & Snacks' | 'Juices';
+  category: string;
   image: string;
 }
 

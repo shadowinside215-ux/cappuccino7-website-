@@ -8,7 +8,7 @@
         "name": { "type": "string" },
         "description": { "type": "string" },
         "price": { "type": "string" },
-        "category": { "type": "string", "enum": ["Coffee", "Breakfast", "Crepes & Snacks", "Juices"] },
+        "category": { "type": "string", "enum": ["Coffee", "Breakfast", "Brunch", "Pizza", "Crêpes Salées", "Crêpes Sucrées", "Gaufres", "Pancakes", "Juices", "Loyalty"] },
         "image": { "type": "string", "format": "uri" },
         "order": { "type": "number" },
         "updatedAt": { "type": "string", "format": "date-time" }

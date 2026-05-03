@@ -6,6 +6,7 @@ import { auth, loginAnonymously, logout, db } from '../../lib/firebase';
 import { useCollection, useDocument, addDocument, updateDocument, removeDocument } from '../../lib/hooks';
 import { uploadImage } from '../../lib/cloudinary';
 import { MenuItem } from '../../types';
+import { MENU_ITEMS } from '../../constants';
 
 export default function AdminDashboard({ onClose }: { onClose: () => void }) {
   const [user, setUser] = useState(auth.currentUser);
@@ -186,10 +187,62 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
              <HeroManager settings={settings} cloudName={cloudName} uploadPreset={uploadPreset} />
 
              <LogoManager settings={settings} cloudName={cloudName} uploadPreset={uploadPreset} />
+
+             <LoyaltyManager settings={settings} cloudName={cloudName} uploadPreset={uploadPreset} />
           </div>
         )}
       </main>
     </div>
+  );
+}
+
+function LoyaltyManager({ settings, cloudName, uploadPreset }: any) {
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleUpload = async (e: any) => {
+    const file = e.target.files?.[0];
+    if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
+    try {
+      const url = await uploadImage(file, cloudName, uploadPreset);
+      await setDoc(doc(db, 'settings', 'global'), { ...settings, loyaltyImage: url }, { merge: true });
+      alert('Loyalty image updated successfully!');
+    } catch (err: any) { alert(err.message); }
+  };
+
+  return (
+    <section className="bg-white p-8 rounded-[32px] shadow-sm">
+      <h3 className="text-xl font-bold mb-8 font-serif">Loyalty Program Visuals</h3>
+      <div className="flex flex-col md:flex-row gap-8 items-center">
+        <div className="w-48 h-48 bg-warm-bg rounded-[32px] overflow-hidden relative group border border-beige-light flex items-center justify-center p-4">
+          <img 
+            src={settings?.loyaltyImage || '/input_file_1.png'} 
+            className="max-w-full max-h-full object-contain" 
+            referrerPolicy="no-referrer"
+          />
+          <div 
+            onClick={() => fileRef.current?.click()}
+            className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-all text-white"
+          >
+            <Upload />
+            <span className="text-[10px] font-bold uppercase mt-2">Change Image</span>
+          </div>
+          <input ref={fileRef} type="file" className="hidden" onChange={handleUpload} />
+        </div>
+        <div className="flex-1">
+          <h4 className="font-bold text-espresso-dark mb-2">Stamps Section Image</h4>
+          <p className="text-sm text-gray-500 font-light mb-4 leading-relaxed">
+            This image appears in the "Stamps. Points. Free Rewards." section of the menu. 
+            It's usually the brand logo or a loyalty-specific icon.
+          </p>
+          <button 
+            onClick={() => fileRef.current?.click()}
+            className="bg-coffee-brown text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-espresso-dark transition-all"
+          >
+            Upload New Loyalty Image
+          </button>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -257,32 +310,63 @@ function TabButton({ active, onClick, icon, label }: any) {
   );
 }
 
-function MenuManager({ items, cloudName, uploadPreset }: any) {
+function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
   const [editingItem, setEditingItem] = useState<any>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Merge hardcoded items with DB items
+  const items = [...dbItems];
+  MENU_ITEMS.forEach(localItem => {
+    if (!items.find(i => i.id === localItem.id)) {
+      items.push(localItem);
+    }
+  });
 
   const handleSave = async (e: any) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
+    if (!editingItem) return;
     
-    if (editingItem.id === 'new') {
-      await addDocument('menuItems', Date.now().toString(), { ...data, order: items.length });
-    } else {
-      await updateDocument('menuItems', editingItem.id, data);
+    try {
+      // Use setDoc via addDocument to ensure it works even if it didn't exist in DB yet
+      await addDocument('menuItems', editingItem.id === 'new' ? Date.now().toString() : editingItem.id, {
+        name: editingItem.name,
+        price: editingItem.price,
+        category: editingItem.category,
+        description: editingItem.description || '',
+        image: editingItem.image,
+        order: editingItem.order ?? items.length
+      });
+      alert('Item saved successfully!');
+      setEditingItem(null);
+    } catch (err: any) {
+      alert('Error saving: ' + err.message);
     }
-    setEditingItem(null);
+  };
+
+  const handleSeedMenu = async () => {
+    if (!confirm('This will import all default menu items into the database so you can edit them. Proceed?')) return;
+    try {
+      for (const item of MENU_ITEMS) {
+        const { id, ...itemData } = item;
+        await addDocument('menuItems', id, { ...itemData, order: MENU_ITEMS.indexOf(item) });
+      }
+      alert('Menu seeded! You can now edit all items.');
+    } catch (err: any) { alert(err.message); }
   };
 
   const handleImageUpload = async (e: any) => {
     const file = e.target.files?.[0];
     if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
     
+    setIsUploading(true);
     try {
       const url = await uploadImage(file, cloudName, uploadPreset);
       setEditingItem({ ...editingItem, image: url });
     } catch (err: any) {
       alert(err.message);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -290,12 +374,22 @@ function MenuManager({ items, cloudName, uploadPreset }: any) {
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h2 className="font-serif text-3xl font-bold text-espresso-dark">Menu Management</h2>
-        <button 
-          onClick={() => setEditingItem({ id: 'new', name: '', price: '', category: 'Coffee', description: '', image: '' })}
-          className="bg-coffee-brown text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold uppercase tracking-widest text-xs"
-        >
-          <Plus size={16} /> Add Item
-        </button>
+        <div className="flex gap-4">
+          {items.length === 0 && (
+            <button 
+              onClick={handleSeedMenu}
+              className="border border-coffee-brown text-coffee-brown px-6 py-3 rounded-xl flex items-center gap-2 font-bold uppercase tracking-widest text-xs hover:bg-coffee-brown hover:text-white transition-all"
+            >
+              Seed Default Menu
+            </button>
+          )}
+          <button 
+            onClick={() => setEditingItem({ id: 'new', name: '', price: '', category: 'Coffee', description: '', image: '' })}
+            className="bg-coffee-brown text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold uppercase tracking-widest text-xs"
+          >
+            <Plus size={16} /> Add Item
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -309,9 +403,18 @@ function MenuManager({ items, cloudName, uploadPreset }: any) {
                <span className="text-xs text-coffee-brown font-bold px-2 py-1 bg-coffee-brown/10 rounded-md uppercase tracking-widest">{item.category}</span>
                <span className="font-bold">{item.price}</span>
             </div>
-            <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
-               <button onClick={() => setEditingItem(item)} className="p-2 bg-white rounded-full shadow-lg text-blue-500 hover:scale-110"><Edit2 size={16} /></button>
-               <button onClick={() => removeDocument('menuItems', item.id)} className="p-2 bg-white rounded-full shadow-lg text-red-500 hover:scale-110"><Trash2 size={16} /></button>
+            <div className="absolute top-4 right-4 flex gap-2 md:opacity-0 md:group-hover:opacity-100 transition-all opacity-100">
+               <button onClick={() => setEditingItem(item)} className="p-2 bg-white rounded-full shadow-lg text-blue-500 hover:scale-110 active:scale-95 transition-all"><Edit2 size={16} /></button>
+               <button 
+                 onClick={async () => {
+                   if (confirm('Delete this item?')) {
+                     await removeDocument('menuItems', item.id);
+                   }
+                 }} 
+                 className="p-2 bg-white rounded-full shadow-lg text-red-500 hover:scale-110 active:scale-95 transition-all"
+               >
+                 <Trash2 size={16} />
+               </button>
             </div>
           </div>
         ))}
@@ -327,10 +430,15 @@ function MenuManager({ items, cloudName, uploadPreset }: any) {
               <div className="space-y-1">
                 <label className="text-xs font-bold uppercase text-gray-400">Item Image</label>
                 <div 
-                  onClick={() => fileRef.current?.click()}
-                  className="aspect-video bg-warm-bg rounded-2xl overflow-hidden cursor-pointer flex items-center justify-center border-2 border-dashed border-beige-light group relative"
+                  onClick={() => !isUploading && fileRef.current?.click()}
+                  className={`aspect-video bg-warm-bg rounded-2xl overflow-hidden cursor-pointer flex items-center justify-center border-2 border-dashed border-beige-light group relative ${isUploading ? 'opacity-50 cursor-wait' : ''}`}
                 >
-                  {editingItem.image ? (
+                  {isUploading ? (
+                    <div className="flex flex-col items-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-coffee-brown mb-2" />
+                      <span className="text-[10px] font-bold uppercase text-gray-400">Uploading...</span>
+                    </div>
+                  ) : editingItem.image ? (
                     <>
                       <img src={editingItem.image} className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
@@ -345,33 +453,58 @@ function MenuManager({ items, cloudName, uploadPreset }: any) {
                   )}
                 </div>
                 <input ref={fileRef} type="file" className="hidden" onChange={handleImageUpload} />
-                <input name="image" type="hidden" value={editingItem.image} required />
               </div>
 
               <div>
                 <label className="text-xs font-bold uppercase text-gray-400">Name</label>
-                <input name="name" defaultValue={editingItem.name} className="w-full bg-warm-bg px-4 py-3 rounded-xl outline-none" required />
+                <input 
+                  value={editingItem.name} 
+                  onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
+                  className="w-full bg-warm-bg px-4 py-3 rounded-xl outline-none" 
+                  required 
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-bold uppercase text-gray-400">Category</label>
-                  <select name="category" defaultValue={editingItem.category} className="w-full bg-warm-bg px-4 py-3 rounded-xl outline-none appearance-none">
+                  <select 
+                    value={editingItem.category} 
+                    onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
+                    className="w-full bg-warm-bg px-4 py-3 rounded-xl outline-none appearance-none font-bold text-xs uppercase tracking-widest"
+                  >
                     <option>Coffee</option>
                     <option>Breakfast</option>
-                    <option>Crepes & Snacks</option>
+                    <option>Brunch</option>
+                    <option>Pizza</option>
+                    <option>Crêpes Salées</option>
+                    <option>Crêpes Sucrées</option>
+                    <option>Gaufres</option>
+                    <option>Pancakes</option>
                     <option>Juices</option>
+                    <option>Loyalty</option>
                   </select>
                 </div>
                 <div>
                   <label className="text-xs font-bold uppercase text-gray-400">Price</label>
-                  <input name="price" defaultValue={editingItem.price} placeholder="e.g. 25 MAD" className="w-full bg-warm-bg px-4 py-3 rounded-xl outline-none" required />
+                  <input 
+                    value={editingItem.price} 
+                    onChange={(e) => setEditingItem({ ...editingItem, price: e.target.value })}
+                    placeholder="e.g. 25 MAD" 
+                    className="w-full bg-warm-bg px-4 py-3 rounded-xl outline-none" 
+                    required 
+                  />
                 </div>
               </div>
 
               <div>
                 <label className="text-xs font-bold uppercase text-gray-400">Description</label>
-                <textarea name="description" defaultValue={editingItem.description} rows={3} className="w-full bg-warm-bg px-4 py-3 rounded-xl outline-none text-sm" />
+                <textarea 
+                  value={editingItem.description} 
+                  onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
+                  rows={3} 
+                  className="w-full bg-warm-bg px-4 py-3 rounded-xl outline-none text-sm" 
+                />
               </div>
 
               <div className="flex gap-4 pt-4">

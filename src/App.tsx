@@ -15,9 +15,11 @@ import LocationAndContact from './components/Location';
 import Footer from './components/Footer';
 import AdminDashboard from './components/Admin/AdminDashboard';
 import { I18nProvider } from './lib/i18n';
+import { useDocument } from './lib/hooks';
 
 export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const { data: settings } = useDocument<any>('settings', 'global');
 
   useEffect(() => {
     (window as any).toggleAdmin = () => setIsAdminOpen(true);
@@ -27,6 +29,20 @@ export default function App() {
       setIsAdminOpen(true);
     }
   }, []);
+
+  // Update favicon if logoUrl changes
+  useEffect(() => {
+    if (settings?.logoUrl) {
+      const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (link) {
+        link.href = settings.logoUrl;
+      }
+      const appleLink = document.querySelector("link[rel~='apple-touch-icon']") as HTMLLinkElement;
+      if (appleLink) {
+        appleLink.href = settings.logoUrl;
+      }
+    }
+  }, [settings?.logoUrl]);
 
   return (
     <I18nProvider>
