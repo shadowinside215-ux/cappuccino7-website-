@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Star, Coffee, Users, Clock, Edit2, Check, X, Camera } from 'lucide-react';
-import { useDocument } from '../lib/hooks';
-import { auth, db } from '../lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { useDocument, updateDocument } from '../lib/hooks';
+import { auth } from '../lib/firebase';
 import { uploadImage } from '../lib/cloudinary';
 import { useTranslation } from '../lib/i18n';
 
@@ -39,31 +38,29 @@ export default function About() {
 
   const handleSaveNote = async () => {
     try {
-      await setDoc(doc(db, 'settings', 'global'), { 
-        ...settings, 
+      await updateDocument('settings', 'global', { 
         atmosphereQuote: tempNote,
         atmosphereAuthor: tempAuthor
-      }, { merge: true });
+      });
       setIsEditingNote(false);
     } catch (err) {
-      console.error(err);
-      alert('Failed to save changes');
+      // Handled by updateDocument
     }
   };
 
   const handleImageUpload = async (e: any) => {
     const file = e.target.files?.[0];
-    const cloudName = localStorage.getItem('cl_name') || process.env.VITE_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = localStorage.getItem('cl_preset') || process.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+    const cloudName = process.env.VITE_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = process.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-    if (!file || !cloudName || !uploadPreset) return alert('Cloudinary settings missing in Admin Dashboard');
+    if (!file || !cloudName || !uploadPreset) return;
 
     setIsUploading(true);
     try {
       const url = await uploadImage(file, cloudName, uploadPreset);
-      await setDoc(doc(db, 'settings', 'global'), { ...settings, atmosphereImage: url }, { merge: true });
+      await updateDocument('settings', 'global', { atmosphereImage: url });
     } catch (err: any) {
-      alert(err.message);
+      // Handled by updateDocument
     } finally {
       setIsUploading(false);
     }

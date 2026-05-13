@@ -13,8 +13,10 @@ export async function loginAnonymously() {
     const result = await signInAnonymously(auth);
     return result.user;
   } catch (error) {
-    console.error('Login error:', error);
-    throw error;
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Login error:', error);
+    }
+    throw new Error('Authentication failed.');
   }
 }
 
@@ -23,8 +25,10 @@ export async function loginWithGoogle() {
     const result = await signInWithPopup(auth, googleProvider);
     return result.user;
   } catch (error) {
-    console.error('Login error:', error);
-    throw error;
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Login error:', error);
+    }
+    throw new Error('Authentication failed.');
   }
 }
 
@@ -32,14 +36,12 @@ export async function logout() {
   await signOut(auth);
 }
 
-// Test connection strictly
-async function testConnection() {
+// Check infrastructure status
+async function checkStatus() {
   try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
+    await getDocFromServer(doc(db, 'system', 'status'));
   } catch (error: any) {
-    if (error.message?.includes('the client is offline')) {
-      console.error("Please check your Firebase configuration.");
-    }
+    // Hidden status check
   }
 }
-testConnection();
+checkStatus();

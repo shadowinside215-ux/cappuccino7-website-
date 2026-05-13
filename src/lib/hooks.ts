@@ -34,20 +34,19 @@ interface FirestoreErrorInfo {
   }
 }
 
-function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
-  const errInfo: FirestoreErrorInfo = {
-    error: error instanceof Error ? error.message : String(error),
-    authInfo: {
-      userId: auth.currentUser?.uid,
-      email: auth.currentUser?.email,
-      emailVerified: auth.currentUser?.emailVerified,
-      isAnonymous: auth.currentUser?.isAnonymous,
-    },
-    operationType,
-    path
-  };
-  console.error('Firestore Error: ', JSON.stringify(errInfo));
-  throw new Error(JSON.stringify(errInfo));
+function handleFirestoreError(error: unknown, _operationType: OperationType, _path: string | null) {
+  const message = error instanceof Error ? error.message : 'An unexpected database error occurred.';
+  
+  // Only log detailed info in development if needed, 
+  // but for production keep it clean and user-friendly
+  if (process.env.NODE_ENV === 'development') {
+    console.error('Database Error:', message, { operation: _operationType, path: _path });
+  } else {
+    // Production: just log that an error occurred without sensitive details
+    console.error('A system error occurred. Please try again later.');
+  }
+
+  throw new Error('Something went wrong. Please refresh the page.');
 }
 
 export function useCollection<T = DocumentData>(path: string, orderField?: string) {
