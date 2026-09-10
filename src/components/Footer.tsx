@@ -52,8 +52,7 @@ export default function Footer() {
           </p>
           <div className={`flex space-x-6 text-[10px] uppercase tracking-widest font-bold text-gray-400 ${isRTL ? 'space-x-reverse' : ''}`}>
             {/* <button onClick={() => (window as any).toggleAdmin()} className="hover:text-espresso-dark transition-colors">Admin Login</button> */}
-            <a href="#" className="hover:text-espresso-dark transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-espresso-dark transition-colors">Terms of Service</a>
+            
           </div>
         </div>
       </div>

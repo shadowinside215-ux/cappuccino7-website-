@@ -58,16 +58,20 @@ export default function Hero() {
     }
   };
 
-  if (loading) {
-    return <div className="h-screen bg-espresso-dark flex items-center justify-center">
-      <div className="w-12 h-12 border-4 border-coffee-brown border-t-transparent rounded-full animate-spin" />
-    </div>;
-  }
+  
 
   const title = settings?.heroTitle || t('hero.title');
   const subtitle = settings?.heroSubtitle || t('hero.subtitle');
-  const image = settings?.heroImage || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1920';
-  const video = settings?.heroVideo;
+  const image = settings?.heroImage || localStorage.getItem('heroImage') || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1920';
+  let video = settings?.heroVideo || localStorage.getItem('heroVideo');
+
+  useEffect(() => {
+    if (settings?.heroVideo) localStorage.setItem('heroVideo', settings.heroVideo);
+    if (settings?.heroImage) localStorage.setItem('heroImage', settings.heroImage);
+  }, [settings?.heroVideo, settings?.heroImage]);
+  if (video && video.includes('cloudinary.com') && video.includes('/upload/') && !video.includes('f_auto')) {
+    video = video.replace('/upload/', '/upload/f_auto,q_auto/');
+  }
 
   return (
     <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden [perspective:1000px]">
@@ -78,11 +82,13 @@ export default function Hero() {
         {video ? (
           <video
             src={video}
+            poster={image}
+            preload="auto"
             autoPlay
             loop
             muted
             playsInline
-            className={`w-full h-full object-cover object-[center_top] scale-[1.10] md:scale-[1.15] transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none`}
+            className={`w-full h-full object-cover object-[center_top] scale-[1.25] md:scale-[1.30] transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none`}
           />
         ) : (
           <img
