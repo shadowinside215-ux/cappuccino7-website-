@@ -8,7 +8,7 @@ import { uploadMedia } from '../lib/cloudinary';
 import { useTranslation } from '../lib/i18n';
 
 export default function Hero() {
-  const { data: settings, loading } = useDocument<any>('settings', 'global');
+  const { data: settings } = useDocument<any>('settings', 'global');
   const [isAdmin, setIsAdmin] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -25,6 +25,11 @@ export default function Hero() {
     });
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (settings?.heroVideo) localStorage.setItem('heroVideo', settings.heroVideo);
+    if (settings?.heroImage) localStorage.setItem('heroImage', settings.heroImage);
+  }, [settings?.heroVideo, settings?.heroImage]);
 
   const handleMediaUpload = async (e: any, type: 'image' | 'video') => {
     const file = e.target.files?.[0];
@@ -60,15 +65,13 @@ export default function Hero() {
 
   
 
+  
+
   const title = settings?.heroTitle || t('hero.title');
   const subtitle = settings?.heroSubtitle || t('hero.subtitle');
-  const image = settings?.heroImage || localStorage.getItem('heroImage') || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1920';
+  const image = settings?.heroImage || localStorage.getItem('heroImage') || '';
   let video = settings?.heroVideo || localStorage.getItem('heroVideo');
 
-  useEffect(() => {
-    if (settings?.heroVideo) localStorage.setItem('heroVideo', settings.heroVideo);
-    if (settings?.heroImage) localStorage.setItem('heroImage', settings.heroImage);
-  }, [settings?.heroVideo, settings?.heroImage]);
   if (video && video.includes('cloudinary.com') && video.includes('/upload/') && !video.includes('f_auto')) {
     video = video.replace('/upload/', '/upload/f_auto,q_auto/');
   }
