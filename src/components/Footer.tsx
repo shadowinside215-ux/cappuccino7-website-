@@ -16,8 +16,8 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <a href="#" className="mb-8 flex items-center space-x-4">
               <img src={logoUrl} alt="Cappuccino 7 Logo" className="h-16 w-auto" referrerPolicy="no-referrer" />
-              <span className="font-serif text-3xl font-bold tracking-tight text-espresso-dark">
-                Cappuccino <span className="text-coffee-brown">7</span>
+              <span className="font-serif text-3xl font-bold tracking-tight text-coffee-brown">
+                Cappuccino 7
               </span>
             </a>
             <p className="text-gray-500 max-w-sm font-light leading-relaxed mb-8">
@@ -51,7 +51,7 @@ export default function Footer() {
             © {currentYear} Cappuccino 7. All Rights Reserved.
           </p>
           <div className={`flex space-x-6 text-[10px] uppercase tracking-widest font-bold text-gray-400 ${isRTL ? 'space-x-reverse' : ''}`}>
-            <button onClick={() => (window as any).toggleAdmin()} className="hover:text-espresso-dark transition-colors">Admin Login</button>
+            {/* <button onClick={() => (window as any).toggleAdmin()} className="hover:text-espresso-dark transition-colors">Admin Login</button> */}
             <a href="#" className="hover:text-espresso-dark transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-espresso-dark transition-colors">Terms of Service</a>
           </div>

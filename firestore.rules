@@ -37,7 +37,7 @@ service cloud.firestore {
       return data.keys().hasAll(['name', 'price', 'category', 'image']) &&
              data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
              data.price is string && data.price.size() > 0 && data.price.size() <= 50 &&
-             data.category in ['Coffee', 'Breakfast', 'Brunch', 'Pizza', 'Crêpes Salées', 'Crêpes Sucrées', 'Gaufres', 'Pancakes', 'Juices', 'Loyalty'] &&
+             data.category in ['Coffee', 'Breakfast', 'Brunch', 'Pizza', 'Crêpes Salées', 'Crêpes Sucrées', 'Gaufres', 'Pancakes', 'Juices', 'Loyalty', 'Les boissons', 'Thé & infusions', 'Special hot drinks', 'Iced latté', 'Ice Tea', 'Jus', 'Frappuccinos coffee', 'Milkshakes', 'Smoothies', 'Mojitos'] &&
              data.image is string && data.image.size() <= 2000 &&
              (!('description' in data) || (data.description is string && data.description.size() <= 2000)) &&
              (!('order' in data) || (data.order is number));

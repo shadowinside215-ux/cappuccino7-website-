@@ -8,6 +8,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
 import MenuSection from './components/Menu';
+import LoyaltySection from './components/LoyaltySection';
 import Services from './components/Services';
 import Reviews from './components/Reviews';
 import Gallery from './components/Gallery';
@@ -54,6 +55,7 @@ export default function App() {
           <Hero />
           <About />
           <MenuSection />
+          <LoyaltySection />
           <Services />
           <Gallery />
           <Reviews />

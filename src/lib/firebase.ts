@@ -36,12 +36,3 @@ export async function logout() {
   await signOut(auth);
 }
 
-// Check infrastructure status
-async function checkStatus() {
-  try {
-    await getDocFromServer(doc(db, 'system', 'status'));
-  } catch (error: any) {
-    // Hidden status check
-  }
-}
-checkStatus();

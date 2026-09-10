@@ -5,7 +5,7 @@ import { GALLERY_IMAGES } from '../constants';
 import { useDocument } from '../lib/hooks';
 import { auth, db } from '../lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
-import { uploadImage } from '../lib/cloudinary';
+import { uploadMedia } from '../lib/cloudinary';
 import { useTranslation } from '../lib/i18n';
 
 export default function Gallery() {
@@ -18,7 +18,7 @@ export default function Gallery() {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setIsAdmin(!!user);
+      setIsAdmin(false /* !!user */);
     });
     return () => unsubscribe();
   }, []);
@@ -48,7 +48,7 @@ export default function Gallery() {
 
     setIsUploading(currentReplaceIdx);
     try {
-      const url = await uploadImage(file, cloudName, uploadPreset);
+      const url = await uploadMedia(file, cloudName, uploadPreset);
       const newImages = [...images.map((img: any) => img.url)];
       newImages[currentReplaceIdx] = url;
       await setDoc(doc(db, 'settings', 'global'), { ...settings, galleryImages: newImages }, { merge: true });

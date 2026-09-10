@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { Star, Coffee, Users, Clock, Edit2, Check, X, Camera } from 'lucide-react';
 import { useDocument, updateDocument } from '../lib/hooks';
 import { auth } from '../lib/firebase';
-import { uploadImage } from '../lib/cloudinary';
+import { uploadMedia } from '../lib/cloudinary';
 import { useTranslation } from '../lib/i18n';
 
 export default function About() {
@@ -18,7 +18,7 @@ export default function About() {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setIsAdmin(!!user);
+      setIsAdmin(false /* !!user */);
     });
     return () => unsubscribe();
   }, []);
@@ -57,7 +57,7 @@ export default function About() {
 
     setIsUploading(true);
     try {
-      const url = await uploadImage(file, cloudName, uploadPreset);
+      const url = await uploadMedia(file, cloudName, uploadPreset);
       await updateDocument('settings', 'global', { atmosphereImage: url });
     } catch (err: any) {
       // Handled by updateDocument

@@ -43,8 +43,8 @@ export default function Navbar() {
         <div className="flex items-center">
           <a href="#" className="flex items-center space-x-3 group">
             <img src={logoUrl} alt="Cappuccino 7 Logo" className="h-12 w-auto md:h-14 transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
-            <span className="font-serif text-xl md:text-2xl font-bold tracking-tight text-espresso-dark">
-              Cappuccino <span className="text-coffee-brown">7</span>
+            <span className="font-serif text-xl md:text-2xl font-bold tracking-tight text-coffee-brown">
+              Cappuccino 7
             </span>
           </a>
         </div>

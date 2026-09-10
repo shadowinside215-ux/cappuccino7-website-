@@ -69,7 +69,7 @@ export default function LocationAndContact() {
             </div>
 
             <a 
-              href="https://www.google.com/maps/search/?api=1&query=X7W6%2BQW6%2C+Av.+Moulay+Rachid%2C+Sal%C3%A9"
+              href="https://www.google.com/maps/search/?api=1&query=Cappuccino+7,+Salé+El+Jadida"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center space-x-3 bg-espresso-dark text-white px-8 py-4 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-coffee-brown transition-all shadow-lg"

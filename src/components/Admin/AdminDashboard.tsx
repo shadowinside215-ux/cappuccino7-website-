@@ -1,10 +1,10 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LogOut, Plus, Trash2, Edit2, Upload, Save, X, Image as ImageIcon, Coffee, Grid, Settings as SettingsIcon, Lock } from 'lucide-react';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, writeBatch } from 'firebase/firestore';
 import { auth, loginAnonymously, logout, db } from '../../lib/firebase';
 import { useCollection, useDocument, addDocument, updateDocument, removeDocument } from '../../lib/hooks';
-import { uploadImage } from '../../lib/cloudinary';
+import { uploadMedia } from '../../lib/cloudinary';
 import { MenuItem } from '../../types';
 import { MENU_ITEMS } from '../../constants';
 
@@ -34,7 +34,7 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
     e.preventDefault();
     setError('');
     
-    if (loginForm.username === 'admin' && loginForm.password === 'admin2000') {
+    if (loginForm.username === 'sam' && loginForm.password === '2006') {
       try {
         const u = await loginAnonymously();
         setUser(u);
@@ -201,12 +201,18 @@ function LoyaltyManager({ settings, cloudName, uploadPreset }: any) {
 
   const handleUpload = async (e: any) => {
     const file = e.target.files?.[0];
-    if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
+    if (!file || !cloudName || !uploadPreset) return console.error('Check Cloudinary Config');
     try {
-      const url = await uploadImage(file, cloudName, uploadPreset);
-      await setDoc(doc(db, 'settings', 'global'), { ...settings, loyaltyImage: url }, { merge: true });
-      alert('Loyalty image updated successfully!');
-    } catch (err: any) { alert(err.message); }
+      const url = await uploadMedia(file, cloudName, uploadPreset);
+      const isVideo = file.type.startsWith('video/');
+      if (isVideo) {
+        await setDoc(doc(db, 'settings', 'global'), { ...settings, heroVideo: url, heroImage: '' }, { merge: true });
+      } else {
+        await setDoc(doc(db, 'settings', 'global'), { ...settings, heroImage: url, heroVideo: '' }, { merge: true });
+      }
+      setIsUploading(false);
+      if (e.target) e.target.value = '';
+    } catch (err: any) { console.error(err.message); }
   };
 
   return (
@@ -226,7 +232,7 @@ function LoyaltyManager({ settings, cloudName, uploadPreset }: any) {
             <Upload />
             <span className="text-[10px] font-bold uppercase mt-2">Change Image</span>
           </div>
-          <input ref={fileRef} type="file" className="hidden" onChange={handleUpload} />
+          <input ref={fileRef} type="file" className="hidden" accept="image/*,video/*" onChange={handleUpload} />
         </div>
         <div className="flex-1">
           <h4 className="font-bold text-espresso-dark mb-2">Stamps Section Image</h4>
@@ -253,10 +259,10 @@ function LogoManager({ settings, cloudName, uploadPreset }: any) {
     const file = e.target.files?.[0];
     if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
     try {
-      const url = await uploadImage(file, cloudName, uploadPreset);
+      const url = await uploadMedia(file, cloudName, uploadPreset);
       await setDoc(doc(db, 'settings', 'global'), { ...settings, logoUrl: url }, { merge: true });
       alert('Logo updated successfully!');
-    } catch (err: any) { alert(err.message); }
+    } catch (err: any) { setIsUploading(false); if (e.target) e.target.value = ''; alert(err.message); }
   };
 
   return (
@@ -276,7 +282,7 @@ function LogoManager({ settings, cloudName, uploadPreset }: any) {
             <Upload />
             <span className="text-[10px] font-bold uppercase mt-2">Change Logo</span>
           </div>
-          <input ref={fileRef} type="file" className="hidden" onChange={handleUpload} />
+          <input ref={fileRef} type="file" className="hidden" accept="image/*,video/*" onChange={handleUpload} />
         </div>
         <div className="flex-1">
           <h4 className="font-bold text-espresso-dark mb-2">Website Logo</h4>
@@ -345,14 +351,28 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
   };
 
   const handleSeedMenu = async () => {
-    if (!confirm('This will import all default menu items into the database so you can edit them. Proceed?')) return;
+    
     try {
       for (const item of MENU_ITEMS) {
         const { id, ...itemData } = item;
         await addDocument('menuItems', id, { ...itemData, order: MENU_ITEMS.indexOf(item) });
       }
-      alert('Menu seeded! You can now edit all items.');
-    } catch (err: any) { alert(err.message); }
+      console.log('Menu seeded!');
+    } catch (err: any) { console.error(err); }
+  };
+
+  const handleClearAllImages = async () => {
+    try {
+      for (const item of items) {
+        if (item.image) {
+          const { id, ...data } = item;
+          await addDocument('menuItems', id, { ...data, image: '' });
+        }
+      }
+      console.log('All menu images cleared successfully!');
+    } catch (err: any) {
+      console.error(err);
+    }
   };
 
   const handleImageUpload = async (e: any) => {
@@ -361,12 +381,14 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
     
     setIsUploading(true);
     try {
-      const url = await uploadImage(file, cloudName, uploadPreset);
+      const url = await uploadMedia(file, cloudName, uploadPreset);
       setEditingItem({ ...editingItem, image: url });
     } catch (err: any) {
       alert(err.message);
     } finally {
       setIsUploading(false);
+      // Reset input value to allow the same file to be selected again
+      if (e.target) e.target.value = '';
     }
   };
 
@@ -375,6 +397,12 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
       <div className="flex justify-between items-center">
         <h2 className="font-serif text-3xl font-bold text-espresso-dark">Menu Management</h2>
         <div className="flex gap-4">
+          <button 
+            onClick={handleClearAllImages}
+            className="border border-red-500 text-red-500 px-6 py-3 rounded-xl flex items-center gap-2 font-bold uppercase tracking-widest text-xs hover:bg-red-500 hover:text-white transition-all"
+          >
+            Clear Images
+          </button>
           {items.length === 0 && (
             <button 
               onClick={handleSeedMenu}
@@ -395,8 +423,12 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item: any) => (
           <div key={item.id} className="bg-white p-6 rounded-[32px] shadow-sm relative group">
-            <div className="aspect-square rounded-2xl overflow-hidden mb-4 bg-warm-bg font-light text-espresso-dark">
-              <img src={item.image} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            <div className="aspect-square rounded-2xl overflow-hidden mb-4 bg-warm-bg font-light text-espresso-dark flex items-center justify-center">
+              {item.image ? (
+                <img src={item.image} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+              ) : (
+                <Coffee size={48} className="text-coffee-brown/40" />
+              )}
             </div>
             <h4 className="font-bold mb-1">{item.name}</h4>
             <div className="flex justify-between items-center">
@@ -407,7 +439,7 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
                <button onClick={() => setEditingItem(item)} className="p-2 bg-white rounded-full shadow-lg text-blue-500 hover:scale-110 active:scale-95 transition-all"><Edit2 size={16} /></button>
                <button 
                  onClick={async () => {
-                   if (confirm('Delete this item?')) {
+                   if (true) {
                      await removeDocument('menuItems', item.id);
                    }
                  }} 
@@ -483,6 +515,16 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
                     <option>Pancakes</option>
                     <option>Juices</option>
                     <option>Loyalty</option>
+                    <option>Les boissons</option>
+                    <option>Thé & infusions</option>
+                    <option>Special hot drinks</option>
+                    <option>Iced latté</option>
+                    <option>Ice Tea</option>
+                    <option>Jus</option>
+                    <option>Frappuccinos coffee</option>
+                    <option>Milkshakes</option>
+                    <option>Smoothies</option>
+                    <option>Mojitos</option>
                   </select>
                 </div>
                 <div>
@@ -521,14 +563,23 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
 
 function HeroManager({ settings, cloudName, uploadPreset }: any) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleUpload = async (e: any) => {
     const file = e.target.files?.[0];
     if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
+    setIsUploading(true);
     try {
-      const url = await uploadImage(file, cloudName, uploadPreset);
-      await setDoc(doc(db, 'settings', 'global'), { ...settings, heroImage: url }, { merge: true });
-    } catch (err: any) { alert(err.message); }
+      const url = await uploadMedia(file, cloudName, uploadPreset);
+      const isVideo = file.type.startsWith('video/');
+      if (isVideo) {
+        await setDoc(doc(db, 'settings', 'global'), { ...settings, heroVideo: url, heroImage: '' }, { merge: true });
+      } else {
+        await setDoc(doc(db, 'settings', 'global'), { ...settings, heroImage: url, heroVideo: '' }, { merge: true });
+      }
+      setIsUploading(false);
+      if (e.target) e.target.value = '';
+    } catch (err: any) { setIsUploading(false); alert(err.message); }
   };
 
   const handleUpdateText = async (e: any) => {
@@ -543,30 +594,40 @@ function HeroManager({ settings, cloudName, uploadPreset }: any) {
       <h3 className="text-xl font-bold mb-8 font-serif">Hero & Style Settings</h3>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <div className="space-y-4">
-          <label className="text-xs font-bold uppercase text-gray-400">Hero Main Image</label>
+          <label className="text-xs font-bold uppercase text-gray-400">Hero Main Media (Image or Video)</label>
           <div className="aspect-video bg-warm-bg rounded-[32px] overflow-hidden relative group">
-            <img src={settings?.heroImage || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1920'} className="w-full h-full object-cover" />
+            {settings?.heroVideo ? (
+              <video src={settings.heroVideo} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+            ) : (
+              <img src={settings?.heroImage || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1920'} className="w-full h-full object-cover" />
+            )}
+            {isUploading && (
+              <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white z-20">
+                 <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin mb-2" />
+                 <span className="text-xs font-bold uppercase">Uploading...</span>
+              </div>
+            )}
             <div 
-              onClick={() => fileRef.current?.click()}
-              className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-all text-white"
+              onClick={() => !isUploading && fileRef.current?.click()}
+              className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-all text-white z-10"
             >
               <Upload />
-              <span className="text-xs font-bold uppercase mt-2">Change Image</span>
+              <span className="text-xs font-bold uppercase mt-2">Change Media</span>
             </div>
-            <input ref={fileRef} type="file" className="hidden" onChange={handleUpload} />
+            <input ref={fileRef} type="file" className="hidden" accept="image/*,video/*" onChange={handleUpload} />
           </div>
         </div>
 
-        <form onSubmit={handleUpdateText} className="space-y-6">
+        <form onSubmit={handleUpdateText} className="space-y-4">
           <div>
-            <label className="text-xs font-bold uppercase text-gray-400 block mb-1">Hero Title</label>
-            <textarea name="heroTitle" defaultValue={settings?.heroTitle || 'The Best Coffee Experience in Salé'} className="w-full bg-warm-bg px-4 py-3 rounded-xl outline-none font-serif text-xl h-24" />
+            <label className="text-xs font-bold uppercase text-gray-400 block mb-2">Hero Title</label>
+            <input name="heroTitle" defaultValue={settings?.heroTitle} className="w-full border border-beige-light rounded-xl px-4 py-3" />
           </div>
           <div>
-            <label className="text-xs font-bold uppercase text-gray-400 block mb-1">Hero Subtitle</label>
-            <textarea name="heroSubtitle" defaultValue={settings?.heroSubtitle || 'Welcome to Cappuccino 7, where every cup tells a story of quality, comfort, and authentic Moroccan atmosphere.'} className="w-full bg-warm-bg px-4 py-3 rounded-xl outline-none text-sm h-32" />
+            <label className="text-xs font-bold uppercase text-gray-400 block mb-2">Hero Subtitle</label>
+            <textarea name="heroSubtitle" defaultValue={settings?.heroSubtitle} className="w-full border border-beige-light rounded-xl px-4 py-3 h-24" />
           </div>
-          <button type="submit" className="w-full bg-espresso-dark text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs">Update Text Content</button>
+          <button type="submit" className="w-full bg-coffee-brown text-white py-4 rounded-xl font-bold uppercase tracking-widest text-sm">Save Text</button>
         </form>
       </div>
     </section>
@@ -578,9 +639,9 @@ function GalleryManager({ settings, cloudName, uploadPreset }: any) {
     const file = e.target.files?.[0];
     if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
     try {
-      const url = await uploadImage(file, cloudName, uploadPreset);
-      const currentImages = settings?.galleryImages || [];
-      await setDoc(doc(db, 'settings', 'global'), { ...settings, galleryImages: [...currentImages, url] }, { merge: true });
+      const url = await uploadMedia(file, cloudName, uploadPreset);
+      const next = [...(settings?.galleryImages || []), url];
+      await setDoc(doc(db, 'settings', 'global'), { ...settings, galleryImages: next }, { merge: true });
     } catch (err: any) { alert(err.message); }
   };
 
@@ -598,13 +659,13 @@ function GalleryManager({ settings, cloudName, uploadPreset }: any) {
           <input type="file" className="hidden" onChange={handleUpload} />
         </label>
       </div>
-
+      
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {settings?.galleryImages?.map((url: string, i: number) => (
           <div key={i} className="aspect-square bg-white rounded-2xl overflow-hidden relative group">
             <img src={url} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-               <button onClick={() => removePhoto(url)} className="p-3 bg-white rounded-full text-red-500 shadow-xl hover:scale-110"><Trash2 size={20} /></button>
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"> 
+              <button onClick={() => removePhoto(url)} className="p-3 bg-white rounded-full text-red-500 shadow-xl hover:scale-110"><Trash2 size={20} /></button>
             </div>
           </div>
         ))}
