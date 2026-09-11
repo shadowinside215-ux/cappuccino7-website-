@@ -18,10 +18,17 @@ import Footer from './components/Footer';
 import { I18nProvider } from './lib/i18n';
 import { useDocument } from './lib/hooks';
 import { Coffee } from 'lucide-react';
+import AdminDashboard from './components/Admin/AdminDashboard';
 
 export default function App() {
   
   const { data: settings, loading } = useDocument<any>('settings', 'global');
+  const [showAdmin, setShowAdmin] = useState(false);
+
+  // Make toggle globally available
+  useEffect(() => {
+    (window as any).toggleAdmin = () => setShowAdmin(p => !p);
+  }, []);
 
   useEffect(() => {
     
@@ -54,6 +61,7 @@ export default function App() {
         ) : null}
         
         
+        {showAdmin && <AdminDashboard onClose={() => setShowAdmin(false)} />}
         <Navbar />
         <main>
           <Hero />

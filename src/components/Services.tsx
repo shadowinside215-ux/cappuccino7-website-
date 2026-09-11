@@ -15,18 +15,13 @@ export default function Services() {
       icon: <Coffee size={32} className="text-coffee-brown" />,
       title: t('services.s2_title'),
       description: t('services.s2_desc')
-    },
-    {
-      icon: <Truck size={32} className="text-coffee-brown" />,
-      title: t('services.s3_title'),
-      description: t('services.s3_desc')
     }
   ];
 
   return (
     <section id="services" className="py-24 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
-        <div className={`grid grid-cols-1 md:grid-cols-3 gap-12 ${isRTL ? 'text-right' : 'text-left'}`}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 gap-12 ${isRTL ? 'text-right' : 'text-left'}`}>
           {services.map((service, idx) => (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
