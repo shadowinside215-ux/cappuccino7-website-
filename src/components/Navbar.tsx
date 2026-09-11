@@ -16,6 +16,25 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setIsOpen(false);
+    
+    setTimeout(() => {
+      if (href === '#') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      
+      const targetId = href.replace('#', '');
+      const element = document.getElementById(targetId);
+      if (element) {
+        const y = element.getBoundingClientRect().top + window.scrollY - 80; // offset for fixed navbar
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }, 150); // slight delay to allow mobile menu closing animation
+  };
+
   const navLinks = [
     { name: t('nav.home'), href: '#' },
     { name: t('nav.about'), href: '#about' },
@@ -54,6 +73,7 @@ export default function Navbar() {
             <a
               key={link.name}
               href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
               className="text-sm font-medium uppercase tracking-wider text-coffee-brown hover:text-espresso-dark transition-colors"
             >
               {link.name}
@@ -120,7 +140,7 @@ export default function Navbar() {
                 <a
                   key={link.name}
                   href={link.href}
-                  onClick={() => setIsOpen(false)}
+                  onClick={(e) => handleNavClick(e, link.href)}
                   className="block text-lg font-serif text-espresso-dark border-b border-beige-light/50 pb-2"
                 >
                   {link.name}

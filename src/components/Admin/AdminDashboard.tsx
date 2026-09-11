@@ -10,7 +10,7 @@ import { MENU_ITEMS } from '../../constants';
 
 export default function AdminDashboard({ onClose }: { onClose: () => void }) {
   const [user, setUser] = useState(auth.currentUser);
-  const [activeTab, setActiveTab] = useState<'menu' | 'gallery' | 'settings'>('menu');
+  const [activeTab, setActiveTab] = useState<'menu' | 'gallery' | 'settings' | 'categories'>('menu');
   const [isUploading, setIsUploading] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
@@ -119,6 +119,7 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
           <h1 className="font-serif text-2xl font-bold text-espresso-dark">Dashboard</h1>
           <div className="hidden md:flex gap-4">
             <TabButton active={activeTab === 'menu'} onClick={() => setActiveTab('menu')} icon={<Coffee size={18} />} label="Menu" />
+            <TabButton active={activeTab === 'categories'} onClick={() => setActiveTab('categories')} icon={<ImageIcon size={18} />} label="Categories" />
             <TabButton active={activeTab === 'gallery'} onClick={() => setActiveTab('gallery')} icon={<Grid size={18} />} label="Gallery" />
             <TabButton active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={<SettingsIcon size={18} />} label="Settings" />
           </div>
@@ -137,6 +138,15 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
             items={menuItems} 
             cloudName={cloudName} 
             uploadPreset={uploadPreset} 
+          />
+        )}
+
+        {activeTab === 'categories' && (
+          <CategoryManager 
+            items={menuItems}
+            settings={settings}
+            cloudName={cloudName}
+            uploadPreset={uploadPreset}
           />
         )}
         
@@ -199,6 +209,7 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
 
 function LoyaltyManager({ settings, cloudName, uploadPreset }: any) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleUpload = async (e: any) => {
     const file = e.target.files?.[0];
@@ -321,6 +332,8 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Merge hardcoded items with DB items
   const items = [...dbItems];
@@ -361,6 +374,12 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
       console.log('Menu seeded!');
     } catch (err: any) { console.error(err); }
   };
+
+  const categories = ['All', ...Array.from(new Set(items.map(item => item.category)))];
+  let filteredItems = activeCategory === 'All' ? items : items.filter((item: any) => item.category === activeCategory);
+  if (searchQuery) {
+    filteredItems = filteredItems.filter((item: any) => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  }
 
   const handleClearAllImages = async () => {
     try {
@@ -421,8 +440,32 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
         </div>
       </div>
 
+      <div className="mb-6">
+        <input 
+          type="text" 
+          placeholder="Search menu items..." 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full md:w-96 px-4 py-3 rounded-xl border border-beige-light focus:outline-none focus:border-coffee-brown mb-4"
+        />
+      </div>
+      <div className="flex flex-wrap gap-2 mb-6">
+        {categories.map((cat: string) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
+              activeCategory === cat
+                 ? 'bg-coffee-brown text-white shadow-lg'
+                 : 'bg-white text-gray-400 hover:text-coffee-brown border border-beige-light'
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items.map((item: any) => (
+        {filteredItems.map((item: any) => (
           <div key={item.id} className="bg-white p-6 rounded-[32px] shadow-sm relative group">
             <div className="aspect-square rounded-2xl overflow-hidden mb-4 bg-warm-bg font-light text-espresso-dark flex items-center justify-center">
               {item.image ? (
@@ -717,6 +760,88 @@ function GalleryManager({ settings, cloudName, uploadPreset }: any) {
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function CategoryManager({ items: dbItems, settings, cloudName, uploadPreset }: any) {
+  const [isUploading, setIsUploading] = useState<string | null>(null);
+
+  const items = [...dbItems];
+  MENU_ITEMS.forEach(localItem => {
+    if (!items.find(i => i.id === localItem.id)) {
+      items.push(localItem);
+    }
+  });
+
+  const categories = Array.from(new Set(items.map(item => item.category)));
+  const categoryImages = settings?.categoryImages || {};
+
+  const handleUpload = async (e: any, cat: string) => {
+    const file = e.target.files?.[0];
+    if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
+    setIsUploading(cat);
+    try {
+      const url = await uploadMedia(file, cloudName, uploadPreset);
+      const next = { ...categoryImages, [cat]: url };
+      await setDoc(doc(db, 'settings', 'global'), { ...settings, categoryImages: next }, { merge: true });
+      setIsUploading(null);
+      if (e.target) e.target.value = '';
+    } catch (err: any) { 
+      setIsUploading(null); 
+      alert(err.message); 
+    }
+  };
+
+  const removePhoto = async (cat: string) => {
+    const next = { ...categoryImages };
+    delete next[cat];
+    await setDoc(doc(db, 'settings', 'global'), { ...settings, categoryImages: next }, { merge: true });
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <h2 className="font-serif text-3xl font-bold text-espresso-dark">Category Images</h2>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categories.map((cat: string) => {
+          const url = categoryImages[cat];
+          return (
+            <div key={cat} className="bg-white p-6 rounded-2xl shadow-sm border border-beige-light">
+              <h4 className="font-bold text-espresso-dark mb-4">{cat}</h4>
+              <div className="aspect-video bg-warm-bg rounded-xl overflow-hidden relative group border border-beige-light flex items-center justify-center">
+                {url ? (
+                  <>
+                    <img src={url} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all gap-4">
+                      <label className="p-3 bg-white rounded-full text-espresso-dark shadow-xl hover:scale-110 cursor-pointer">
+                        <Upload size={20} />
+                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, cat)} />
+                      </label>
+                      <button onClick={() => removePhoto(cat)} className="p-3 bg-white rounded-full text-red-500 shadow-xl hover:scale-110">
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer hover:bg-beige-light/30 transition-all text-gray-400 hover:text-coffee-brown">
+                    <ImageIcon size={32} className="mb-2" />
+                    <span className="text-xs font-bold uppercase">Upload Image</span>
+                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, cat)} />
+                  </label>
+                )}
+                {isUploading === cat && (
+                  <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white z-20">
+                     <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

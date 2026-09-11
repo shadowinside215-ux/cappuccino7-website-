@@ -30,13 +30,6 @@ export default function App() {
     (window as any).toggleAdmin = () => setShowAdmin(p => !p);
   }, []);
 
-  useEffect(() => {
-    
-    
-    // Auto open if URL has admin param
-    
-  }, []);
-
   // Update favicon if logoUrl changes
   useEffect(() => {
     if (settings?.logoUrl) {

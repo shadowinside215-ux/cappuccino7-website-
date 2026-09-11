@@ -9,6 +9,20 @@ export default function Footer() {
 
   const logoUrl = settings?.logoUrl || "/input_file_1.png";
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    if (href === '#') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    if (element) {
+      const y = element.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
   return (
     <footer className={`bg-white border-t border-beige-light pt-20 pb-10 px-4 ${isRTL ? 'text-right' : 'text-left'}`}>
       <div className="max-w-7xl mx-auto">
@@ -38,10 +52,10 @@ export default function Footer() {
           <div>
             <h5 className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400 mb-6">{t('footer.quickLinks')}</h5>
             <ul className="space-y-3 text-sm font-medium">
-              <li><a href="#about" className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.about')}</a></li>
-              <li><a href="#menu" className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.menu')}</a></li>
-              <li><a href="#gallery" className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.gallery')}</a></li>
-              <li><a href="#location" className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.contact')}</a></li>
+              <li><a href="#about" onClick={(e) => handleNavClick(e, '#about')} className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.about')}</a></li>
+              <li><a href="#menu" onClick={(e) => handleNavClick(e, '#menu')} className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.menu')}</a></li>
+              <li><a href="#gallery" onClick={(e) => handleNavClick(e, '#gallery')} className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.gallery')}</a></li>
+              <li><a href="#location" onClick={(e) => handleNavClick(e, '#location')} className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.contact')}</a></li>
             </ul>
           </div>
         </div>
@@ -49,7 +63,7 @@ export default function Footer() {
         <div className="border-t border-beige-light/30 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-xs text-gray-400 tracking-wider uppercase font-medium">{t('footer.rights')}</p>
           <div className={`flex space-x-6 text-[10px] uppercase tracking-widest font-bold text-gray-400 ${isRTL ? 'space-x-reverse' : ''}`}>
-            {/* <button onClick={() => (window as any).toggleAdmin()} className="hover:text-espresso-dark transition-colors">Admin Login</button> */}
+
           </div>
         </div>
       </div>

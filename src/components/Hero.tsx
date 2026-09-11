@@ -56,13 +56,13 @@ export default function Hero() {
             loop
             muted
             playsInline
-            className={`w-full h-full object-cover object-[center_top] scale-[1.02] transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none`}
+            className={`w-full h-full object-cover object-[15%_center] md:object-[center_top] transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none`}
           />
         ) : (
           <img
             src={image}
             alt="Cappuccino 7 Cafe"
-            className={`w-full h-full object-cover scale-[1.05] md:scale-[1.10] origin-center transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none`}
+            className={`w-full h-full object-cover object-[15%_center] md:object-[center_top] scale-[1.05] md:scale-[1.10] origin-center transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none`}
             referrerPolicy="no-referrer"
           />
         )}

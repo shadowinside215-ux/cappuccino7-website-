@@ -70,13 +70,30 @@ export default function MenuSection() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="flex flex-col gap-10"
           >
-            {filteredItems.map((item: MenuItem) => (
-              <div key={item.id}>
-                <MenuCard item={item} />
+            {settings?.categoryImages?.[activeCategory] && (
+              <div className="w-full rounded-[32px] overflow-hidden relative shadow-lg bg-transparent">
+                <img 
+                  src={settings.categoryImages[activeCategory]} 
+                  alt={activeCategory} 
+                  className="w-full h-auto block"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                  <h3 className="text-white font-serif text-3xl md:text-5xl font-bold tracking-wider uppercase drop-shadow-lg">
+                    {activeCategory}
+                  </h3>
+                </div>
               </div>
-            ))}
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredItems.map((item: MenuItem) => (
+                <div key={item.id}>
+                  <MenuCard item={item} />
+                </div>
+              ))}
+            </div>
           </motion.div>
         </AnimatePresence>
       </div>
@@ -95,28 +112,26 @@ function MenuCard({ item }: MenuCardProps) {
   
   return (
     <div className="bg-white p-6 rounded-[32px] shadow-sm hover:shadow-xl transition-all border border-beige-light group flex flex-col h-full">
-      <div className="aspect-[4/3] rounded-[32px] overflow-hidden mb-6 relative bg-[#241f1c] flex items-center justify-center">
-        {item.image ? (
-          <>
-            <img 
-              src={item.image} 
-              alt={t(item.name) || item.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg z-10">
-              <span className="text-espresso-dark font-bold text-sm">{item.price}</span>
-            </div>
-          </>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center relative">
-            <Coffee className="w-16 h-16 text-[#3d3430] group-hover:scale-110 group-hover:text-[#4d423d] transition-all duration-500" strokeWidth={1.5} />
-            <div className="absolute top-4 left-4 border border-[#3d3430] bg-transparent px-4 py-2 rounded-full">
-              <span className="text-white/90 font-bold text-sm tracking-wide">{item.price}</span>
-            </div>
+      {item.image ? (
+        <div className="w-full rounded-[32px] overflow-hidden mb-6 relative bg-transparent flex items-center justify-center">
+          <img 
+            src={item.image} 
+            alt={t(item.name) || item.name}
+            className="w-full h-auto block group-hover:scale-110 transition-transform duration-500"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg z-10">
+            <span className="text-espresso-dark font-bold text-sm">{item.price}</span>
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="aspect-[4/3] rounded-[32px] overflow-hidden mb-6 relative bg-[#241f1c] flex items-center justify-center">
+          <Coffee className="w-16 h-16 text-[#3d3430] group-hover:scale-110 group-hover:text-[#4d423d] transition-all duration-500" strokeWidth={1.5} />
+          <div className="absolute top-4 left-4 border border-[#3d3430] bg-transparent px-4 py-2 rounded-full">
+            <span className="text-white/90 font-bold text-sm tracking-wide">{item.price}</span>
+          </div>
+        </div>
+      )}
       <div className={`flex-grow ${isRTL ? 'text-right' : 'text-left'}`}>
         <h4 className="font-serif text-xl font-bold text-espresso-dark mb-2 group-hover:text-coffee-brown transition-colors">
           {item.name}

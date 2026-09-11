@@ -22,7 +22,7 @@ export const MENU_ITEMS: MenuItem[] = [
   { id: 'b5', name: 'Ftour Chamali', description: "Œufs brouillés avec charcuterie et fromage blanc, panier de pain, jus d'orange, balboula, boisson chaude au choix, eau minérale.", price: '58dh', category: 'Breakfast', image: '' },
   { id: 'b6', name: 'Omelette Spéciale', description: "Œufs brouillés avec tomate cerise, oignons, dinde fumée, panier de pain, jus d'orange, balboula, boisson chaude au choix, eau minérale.", price: '48dh', category: 'Breakfast', image: '' },
   { id: 'b7', name: 'Cappuccino7 Breakfast', description: "Croque monsieur, hotdog, fromage blanc, salade (verte, tomate, maïs), crêpe Nutella, salade de fruits, jus d'orange, balboula, boisson chaude au choix, eau minérale.", price: '68dh', category: 'Breakfast', image: '' },
-  { id: 'b8', name: 'Healthy Breakfast', description: "Toast avocat & œufs, bol d’avoine (banane, chia, fruits secs), fruits de saison, yaourt, jus d’orange, balboula, boisson chaude au choix, eau minérale.", price: '60dh', category: 'Breakfast', image: '' },
+  { id: 'b8_healthy', name: 'Healthy Breakfast', description: "Toast avocat & œufs, bol d’avoine (banane, chia, fruits secs), fruits de saison, yaourt, jus d’orange, balboula, boisson chaude au choix, eau minérale.", price: '60dh', category: 'Breakfast', image: '' },
   { id: 'b9', name: 'Turkie', description: "Œufs au plat brouillés, hash browns, tomate grillée.", price: '68dh', category: 'Breakfast', image: '' },
   { id: 'b10', name: 'Anglais', description: "Œufs au plat, fromages (rouge, blanc, cheddar), concombre, salade tomate, olives, huile d’olive, jambon, beurre, confiture, pain, jus d’orange, balboula, boisson chaude, eau minérale.", price: '85dh', category: 'Breakfast', image: '' },
 
@@ -76,6 +76,7 @@ export const MENU_ITEMS: MenuItem[] = [
 
   // LES BOISSONS
   { id: 'lb1', name: 'Lait chaude', description: '', price: '14dh', category: 'Les boissons', image: '' },
+  { id: 'lb2', name: 'Espresso', description: '', price: '14dh', category: 'Les boissons', image: '' },
   { id: 'lb3', name: 'Café américain', description: '', price: '15dh', category: 'Les boissons', image: '' },
   { id: 'lb4', name: 'Lait parfumé', description: '', price: '14dh', category: 'Les boissons', image: '' },
   { id: 'lb5', name: 'Café crème', description: '', price: '15dh', category: 'Les boissons', image: '' },
