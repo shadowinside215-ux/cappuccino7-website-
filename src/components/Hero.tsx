@@ -90,7 +90,7 @@ export default function Hero() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          <h2 className="font-serif text-3xl md:text-5xl text-coffee-brown font-bold leading-tight mb-6 drop-shadow-2xl max-w-2xl text-left">
+          <h2 className="font-serif text-3xl md:text-5xl text-coffee-brown font-bold leading-tight mb-6 drop-shadow-[0_0_15px_rgba(183,110,35,0.8)] max-w-2xl text-left" style={{ textShadow: "0 0 15px rgba(183,110,35,0.8), 0 0 30px rgba(183,110,35,0.6)" }}>
             {t('hero.title')}
           </h2>
           <p className="text-white/90 text-lg md:text-xl max-w-xl mb-10 font-light leading-relaxed drop-shadow-md text-left">
