@@ -36,7 +36,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h5 className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400 mb-6">Quick Links</h5>
+            <h5 className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400 mb-6">{t('footer.quickLinks')}</h5>
             <ul className="space-y-3 text-sm font-medium">
               <li><a href="#about" className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.about')}</a></li>
               <li><a href="#menu" className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.menu')}</a></li>
@@ -47,11 +47,9 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-beige-light/30 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-xs text-gray-400 tracking-wider uppercase font-medium">
-            © {currentYear} Cappuccino 7. All Rights Reserved.
-          </p>
+          <p className="text-xs text-gray-400 tracking-wider uppercase font-medium">{t('footer.rights')}</p>
           <div className={`flex space-x-6 text-[10px] uppercase tracking-widest font-bold text-gray-400 ${isRTL ? 'space-x-reverse' : ''}`}>
-            {/* <button onClick={() => (window as any).toggleAdmin()} className="hover:text-espresso-dark transition-colors">Admin Login</button> */}
+            
             
           </div>
         </div>

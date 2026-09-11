@@ -39,10 +39,10 @@ export default function Navbar() {
         scrolled ? 'bg-warm-bg/90 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="w-full px-2 md:px-6 flex items-center justify-between">
         <div className="flex items-center">
           <a href="#" className="flex items-center space-x-3 group">
-            <img src={logoUrl} alt="Cappuccino 7 Logo" className="h-12 w-auto md:h-14 transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
+            <img src={logoUrl} alt="Cappuccino 7 Logo" className="h-16 w-auto md:h-24 md:-ml-2 md:-mt-4 transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
             <span className="font-serif text-xl md:text-2xl font-bold tracking-tight text-coffee-brown">
               Cappuccino 7
             </span>
@@ -54,7 +54,7 @@ export default function Navbar() {
             <a
               key={link.name}
               href={link.href}
-              className="text-sm font-medium uppercase tracking-wider text-espresso-dark hover:text-coffee-brown transition-colors"
+              className="text-sm font-medium uppercase tracking-wider text-coffee-brown hover:text-espresso-dark transition-colors"
             >
               {link.name}
             </a>
@@ -68,7 +68,7 @@ export default function Navbar() {
                   key={l.code}
                   onClick={() => setLang(l.code)}
                   className={`text-[10px] font-bold px-1.5 py-0.5 rounded transition-all ${
-                    lang === l.code ? 'bg-coffee-brown text-white' : 'text-espresso-dark hover:text-coffee-brown'
+                    lang === l.code ? 'bg-coffee-brown text-white' : 'text-coffee-brown hover:text-espresso-dark'
                   }`}
                 >
                   {l.label}
@@ -82,7 +82,7 @@ export default function Navbar() {
             className="flex items-center space-x-2 bg-coffee-brown text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-espresso-dark transition-all"
           >
             <Phone size={16} />
-            <span>{lang === 'ar' ? 'اتصل بنا' : lang === 'fr' ? 'Appelez-nous' : 'Call Us'}</span>
+            <span>{t('nav.callUs')}</span>
           </a>
         </div>
 
@@ -131,7 +131,7 @@ export default function Navbar() {
                 className="flex items-center justify-center space-x-2 bg-coffee-brown text-white w-full py-3 rounded-xl"
               >
                 <Phone size={18} />
-                <span>{lang === 'ar' ? 'اتصل بنا الآن' : lang === 'fr' ? 'Appelez-nous' : 'Call Us Now'}</span>
+                <span>{t('nav.callUsNow')}</span>
               </a>
             </div>
           </motion.div>

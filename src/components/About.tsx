@@ -3,25 +3,20 @@ import { motion } from 'motion/react';
 import { Star, Coffee, Users, Clock, Edit2, Check, X, Camera } from 'lucide-react';
 import { useDocument, updateDocument } from '../lib/hooks';
 import { auth } from '../lib/firebase';
-import { uploadMedia } from '../lib/cloudinary';
+
 import { useTranslation } from '../lib/i18n';
 
 export default function About() {
   const { data: settings, loading } = useDocument<any>('settings', 'global');
-  const [isAdmin, setIsAdmin] = useState(false);
+  
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [tempNote, setTempNote] = useState('');
   const [tempAuthor, setTempAuthor] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const isUploading = false;
+  
   const { t, isRTL } = useTranslation();
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setIsAdmin(false /* !!user */);
-    });
-    return () => unsubscribe();
-  }, []);
+  
 
   if (loading) {
     return <div className="py-24 px-4 bg-white flex items-center justify-center">
@@ -32,7 +27,7 @@ export default function About() {
   const stats = [
     { icon: <Star className="text-coffee-brown" />, value: '4.8', label: t('about.stat1') },
     { icon: <Users className="text-coffee-brown" />, value: '2.8k+', label: t('about.stat2') },
-    { icon: <Clock className="text-coffee-brown" />, value: '15h', label: 'Service' },
+    { icon: <Clock className="text-coffee-brown" />, value: '15h', label: t('about.service') },
     { icon: <Coffee className="text-coffee-brown" />, value: '50+', label: t('about.stat3') },
   ];
 
@@ -48,23 +43,7 @@ export default function About() {
     }
   };
 
-  const handleImageUpload = async (e: any) => {
-    const file = e.target.files?.[0];
-    const cloudName = process.env.VITE_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-
-    if (!file || !cloudName || !uploadPreset) return;
-
-    setIsUploading(true);
-    try {
-      const url = await uploadMedia(file, cloudName, uploadPreset);
-      await updateDocument('settings', 'global', { atmosphereImage: url });
-    } catch (err: any) {
-      // Handled by updateDocument
-    } finally {
-      setIsUploading(false);
-    }
-  };
+  
 
   const quote = settings?.atmosphereQuote || t('gallery.title');
   const author = settings?.atmosphereAuthor || "— Regular Guest";
@@ -118,23 +97,9 @@ export default function About() {
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
-              {isAdmin && (
-                <div 
-                  onClick={() => fileRef.current?.click()}
-                  className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center cursor-pointer opacity-0 hover:opacity-100 transition-all text-white z-30"
-                >
-                  <Camera size={40} />
-                  <span className="text-xs font-bold uppercase tracking-widest mt-4">Change Atmosphere Photo</span>
-                </div>
-              )}
+              
             </div>
-            <input 
-              ref={fileRef}
-              type="file" 
-              className="hidden" 
-              onChange={handleImageUpload} 
-              accept="image/*"
-            />
+            
             <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-latte-cream/20 rounded-[40px] -z-0 rotate-12" />
             <div className="absolute -top-10 -left-10 w-40 h-40 border-2 border-coffee-brown/20 rounded-full -z-0" />
             
@@ -163,18 +128,7 @@ export default function About() {
                     "{quote}"
                   </p>
                   <p className="mt-2 text-xs font-bold uppercase tracking-widest text-coffee-brown">{author}</p>
-                  {isAdmin && (
-                    <button 
-                      onClick={() => {
-                        setTempNote(quote);
-                        setTempAuthor(author);
-                        setIsEditingNote(true);
-                      }}
-                      className="absolute -top-2 -right-2 p-2 bg-coffee-brown text-white rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:scale-110"
-                    >
-                      <Edit2 size={12} />
-                    </button>
-                  )}
+                  
                 </>
               )}
             </div>

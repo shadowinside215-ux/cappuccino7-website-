@@ -49,7 +49,7 @@ export default function MenuSection() {
           <div className="flex flex-wrap justify-center gap-2 mb-12">
             {categories.map((cat) => (
               <button
-                key={cat}
+                key={t(cat) || cat}
                 onClick={() => setActiveCategory(cat)}
                 className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
                   activeCategory === cat 
@@ -91,7 +91,7 @@ interface MenuCardProps {
 }
 
 function MenuCard({ item }: MenuCardProps) {
-  const { isRTL } = useTranslation();
+  const { t, isRTL } = useTranslation();
   
   return (
     <div className="bg-white p-6 rounded-[32px] shadow-sm hover:shadow-xl transition-all border border-beige-light group flex flex-col h-full">
@@ -100,7 +100,7 @@ function MenuCard({ item }: MenuCardProps) {
           <>
             <img 
               src={item.image} 
-              alt={item.name}
+              alt={t(item.name) || item.name}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               referrerPolicy="no-referrer"
             />
@@ -122,7 +122,7 @@ function MenuCard({ item }: MenuCardProps) {
           {item.name}
         </h4>
         <p className="text-gray-500 text-sm font-light leading-relaxed">
-          {item.description}
+          {t(item.description) || item.description}
         </p>
       </div>
     </div>

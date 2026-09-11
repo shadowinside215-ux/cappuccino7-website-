@@ -31,8 +31,8 @@ export default function LoyaltySection() {
             </div>
             
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight">
-              Your Coffee, <br />
-              <span className="text-coffee-brown">Rewarded.</span>
+              {t('loyalty.title')} <br />
+              <span className="text-coffee-brown">{t('loyalty.subtitle')}</span>
             </h2>
             
             <p className="text-gray-300 text-lg leading-relaxed mb-10">
@@ -40,24 +40,7 @@ export default function LoyaltySection() {
             </p>
 
             <div className="space-y-6 mb-10">
-              <div className="flex items-center gap-5 text-white bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
-                <div className="w-14 h-14 rounded-full bg-coffee-brown flex items-center justify-center text-white flex-shrink-0 shadow-lg shadow-coffee-brown/20">
-                  <Star size={24} className="fill-current" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-lg mb-1">{t('menu.loyalty.title') || 'Collect Stamps'}</h4>
-                  <p className="text-gray-400 text-sm">11 stamps = 1 free drink or dish</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-5 text-white bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
-                <div className="w-14 h-14 rounded-full bg-coffee-brown flex items-center justify-center text-white flex-shrink-0 shadow-lg shadow-coffee-brown/20">
-                  <Gift size={24} />
-                </div>
-                <div>
-                  <h4 className="font-bold text-lg mb-1">Earn Elite Points</h4>
-                  <p className="text-gray-400 text-sm">Every Dirham counts towards elite gifts</p>
-                </div>
-              </div>
+              
             </div>
             
             <a 
@@ -66,7 +49,7 @@ export default function LoyaltySection() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 px-8 bg-coffee-brown text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-coffee-brown transition-all shadow-xl hover:shadow-white/10 group"
             >
-              <span>{t('menu.app') || 'Access Web App'}</span>
+              <span>{t('loyalty.access')}</span>
               <ArrowRight size={18} className={`group-hover:translate-x-1 transition-transform ${isRTL ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
             </a>
           </motion.div>
@@ -106,13 +89,7 @@ export default function LoyaltySection() {
               <Star className="text-coffee-brown w-10 h-10 fill-coffee-brown" />
             </motion.div>
             
-            <motion.div 
-               animate={{ y: [0, 20, 0] }}
-               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-               className="absolute bottom-1/4 -left-8 md:-left-12 w-20 h-20 bg-coffee-brown backdrop-blur-lg rounded-2xl border border-white/10 flex items-center justify-center shadow-2xl transform -rotate-12 z-20"
-            >
-              <Gift className="text-white w-8 h-8" />
-            </motion.div>
+            
           </motion.div>
         </div>
         

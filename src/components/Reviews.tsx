@@ -1,8 +1,10 @@
 import { motion } from 'motion/react';
 import { Star, Quote } from 'lucide-react';
 import { REVIEWS } from '../constants';
+import { useTranslation } from '../lib/i18n';
 
 export default function Reviews() {
+  const { t } = useTranslation();
   return (
     <section id="reviews" className="py-24 px-4 bg-espresso-dark text-white relative overflow-hidden">
       {/* Decorative patterns */}
@@ -17,10 +19,10 @@ export default function Reviews() {
             ))}
           </div>
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-4">
-            Voices of Salé
+            {t('reviews.title')}
           </h2>
           <p className="text-white/60 uppercase tracking-widest text-xs font-semibold">
-            Rated 4.8/5 by 2,800+ guests on Google
+            {t('reviews.subtitle')}
           </p>
         </div>
 
@@ -36,12 +38,12 @@ export default function Reviews() {
             >
               <Quote className="text-latte-cream mb-6" size={32} />
               <p className="text-white/80 text-lg leading-relaxed mb-10 flex-grow italic font-light">
-                "{review.comment}"
+                "{t(`review.comment.${idx}`) || review.comment}"
               </p>
               <div className="flex items-center justify-between border-t border-white/10 pt-6">
                 <div>
-                  <h4 className="font-bold text-white uppercase text-sm tracking-widest">{review.author}</h4>
-                  <p className="text-xs text-white/40 mt-1">{review.date}</p>
+                  <h4 className="font-bold text-white uppercase text-sm tracking-widest">{t(`review.author.${idx}`) || review.author}</h4>
+                  <p className="text-xs text-white/40 mt-1">{t(`review.date.${idx}`) || review.date}</p>
                 </div>
                 <div className="flex items-center space-x-1 text-latte-cream">
                   <Star size={12} fill="currentColor" />
@@ -52,17 +54,7 @@ export default function Reviews() {
           ))}
         </div>
         
-        <div className="mt-16 text-center">
-          <a 
-            href="#" 
-            className="inline-flex items-center space-x-2 text-latte-cream hover:text-white transition-colors group"
-          >
-            <span className="text-sm font-bold uppercase tracking-widest">Read All Google Reviews</span>
-            <motion.span animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-              →
-            </motion.span>
-          </a>
-        </div>
+
       </div>
     </section>
   );

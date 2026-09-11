@@ -1,67 +1,32 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
-import { Camera, Video } from 'lucide-react';
+
 import { useDocument } from '../lib/hooks';
-import { auth, db } from '../lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
-import { uploadMedia } from '../lib/cloudinary';
+import { db } from '../lib/firebase';
+
+
 import { useTranslation } from '../lib/i18n';
 
 export default function Hero() {
   const { data: settings } = useDocument<any>('settings', 'global');
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const videoRef = useRef<HTMLInputElement>(null);
+  
+  const isUploading = false;
+  
+  
   const { t, lang } = useTranslation();
   
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 1000], [0, 300]);
   const scale = useTransform(scrollY, [0, 1000], [1, 1.2]);
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setIsAdmin(false /* !!user */);
-    });
-    return () => unsubscribe();
-  }, []);
+  
 
   useEffect(() => {
     if (settings?.heroVideo) localStorage.setItem('heroVideo', settings.heroVideo);
     if (settings?.heroImage) localStorage.setItem('heroImage', settings.heroImage);
   }, [settings?.heroVideo, settings?.heroImage]);
 
-  const handleMediaUpload = async (e: any, type: 'image' | 'video') => {
-    const file = e.target.files?.[0];
-    const cloudName = localStorage.getItem('cl_name') || import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = localStorage.getItem('cl_preset') || import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-
-    if (!file || !cloudName || !uploadPreset) return alert('Cloudinary settings missing in Admin Dashboard');
-
-    setIsUploading(true);
-    try {
-      const url = await uploadMedia(file, cloudName, uploadPreset);
-      
-      const newSettings = { ...settings };
-      if (type === 'video') {
-        newSettings.heroVideo = url;
-        // Optionally clear image when video is uploaded
-        newSettings.heroImage = '';
-      } else {
-        newSettings.heroImage = url;
-        // Optionally clear video when image is uploaded
-        newSettings.heroVideo = '';
-      }
-      
-      await setDoc(doc(db, 'settings', 'global'), newSettings, { merge: true });
-      setIsUploading(false);
-      if (e.target) e.target.value = '';
-    } catch (err: any) {
-      setIsUploading(false);
-      if (e.target) e.target.value = '';
-      alert(err.message);
-    }
-  };
+  
 
   
 
@@ -91,7 +56,7 @@ export default function Hero() {
             loop
             muted
             playsInline
-            className={`w-full h-full object-cover object-[center_top] scale-[1.25] md:scale-[1.30] transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none`}
+            className={`w-full h-full object-cover object-[center_top] scale-[1.02] transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none`}
           />
         ) : (
           <img
@@ -113,58 +78,25 @@ export default function Hero() {
              <span className="text-sm font-bold uppercase tracking-widest text-coffee-brown">Uploading Media...</span>
           </div>
         )}
-        {isAdmin && !isUploading && (
-          <div className="absolute inset-0 bg-black/40 flex flex-row items-center justify-center gap-8 opacity-0 hover:opacity-100 transition-all text-white z-10">
-            <div 
-              onClick={() => fileRef.current?.click()}
-              className="flex flex-col items-center justify-center cursor-pointer hover:text-coffee-brown transition-colors"
-            >
-              <Camera size={48} />
-              <span className="text-sm font-bold uppercase tracking-widest mt-4">Image Background</span>
-            </div>
-            <div 
-              onClick={() => videoRef.current?.click()}
-              className="flex flex-col items-center justify-center cursor-pointer hover:text-coffee-brown transition-colors"
-            >
-              <Video size={48} />
-              <span className="text-sm font-bold uppercase tracking-widest mt-4">Video Background</span>
-            </div>
-          </div>
-        )}
+        
       </motion.div>
 
-      <input 
-        ref={fileRef}
-        type="file" 
-        className="hidden" 
-        onChange={(e) => handleMediaUpload(e, 'image')} 
-        accept="image/*"
-      />
-      <input 
-        ref={videoRef}
-        type="file" 
-        className="hidden" 
-        onChange={(e) => handleMediaUpload(e, 'video')} 
-        accept="video/*"
-      />
+      
+      
 
-      <div className="relative z-10 text-center max-w-4xl px-4 flex flex-col items-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-start mt-[45vh] md:mt-[50vh]">
         <motion.div
-          initial={{ opacity: 0, y: 50, rotateX: 20 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          style={{ transformStyle: "preserve-3d" }}
         >
-          <span className="inline-block text-beige-light font-medium uppercase tracking-[0.3em] text-xs mb-6 drop-shadow-md">
-            Salé's Finest Coffee Shop
-          </span>
-          <h1 className="font-serif text-5xl md:text-8xl text-white font-bold leading-tight mb-8 drop-shadow-2xl">
-            {title}
-          </h1>
-          <p className="text-white/90 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-light leading-relaxed drop-shadow-md">
+          <h2 className="font-serif text-3xl md:text-5xl text-coffee-brown font-bold leading-tight mb-6 drop-shadow-2xl max-w-2xl text-left">
+            {t('hero.title')}
+          </h2>
+          <p className="text-white/90 text-lg md:text-xl max-w-xl mb-10 font-light leading-relaxed drop-shadow-md text-left">
             {subtitle}
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-4">
             <a
               id="hero-cta-menu"
               href="#menu"
@@ -177,7 +109,7 @@ export default function Hero() {
               href="#location"
               className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-4 rounded-full text-lg font-medium hover:bg-white/20 transition-all transform hover:scale-105 shadow-xl"
             >
-              {lang === 'ar' ? 'موقعنا' : lang === 'fr' ? 'Nous trouver' : 'Visit Us'}
+              {t('hero.visit')}
             </a>
           </div>
         </motion.div>

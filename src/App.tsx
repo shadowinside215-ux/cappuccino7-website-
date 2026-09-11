@@ -14,22 +14,20 @@ import Reviews from './components/Reviews';
 import Gallery from './components/Gallery';
 import LocationAndContact from './components/Location';
 import Footer from './components/Footer';
-import AdminDashboard from './components/Admin/AdminDashboard';
+
 import { I18nProvider } from './lib/i18n';
 import { useDocument } from './lib/hooks';
 import { Coffee } from 'lucide-react';
 
 export default function App() {
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  
   const { data: settings, loading } = useDocument<any>('settings', 'global');
 
   useEffect(() => {
-    (window as any).toggleAdmin = () => setIsAdminOpen(true);
+    
     
     // Auto open if URL has admin param
-    if (window.location.search.includes('admin=true')) {
-      setIsAdminOpen(true);
-    }
+    
   }, []);
 
   // Update favicon if logoUrl changes
@@ -54,7 +52,7 @@ export default function App() {
             <Coffee className="w-16 h-16 text-coffee-brown animate-spin" />
           </div>
         ) : null}
-        {isAdminOpen && <AdminDashboard onClose={() => setIsAdminOpen(false)} />}
+        
         
         <Navbar />
         <main>
