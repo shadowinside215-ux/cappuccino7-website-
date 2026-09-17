@@ -18,12 +18,16 @@ export default function MenuSection() {
   });
 
   const categories: string[] = Array.from(new Set(itemsToShow.map(item => item.category)));
-  const [activeCategory, setActiveCategory] = useState(categories[0] || '');
+  const [activeCategory, setActiveCategory] = useState('');
 
   // Set initial category when data loads
   useEffect(() => {
     if (categories.length > 0 && !activeCategory) {
-      setActiveCategory(categories[0]);
+      if (categories.includes('Breakfast')) {
+        setActiveCategory('Breakfast');
+      } else {
+        setActiveCategory(categories[0]);
+      }
     }
   }, [categories, activeCategory]);
 
@@ -63,6 +67,15 @@ export default function MenuSection() {
           </div>
         </div>
 
+        
+          
+
+        
+          
+
+        
+          
+
         <AnimatePresence mode="wait">
           <motion.div 
             key={activeCategory}
@@ -82,12 +95,32 @@ export default function MenuSection() {
             </div>
           </motion.div>
         </AnimatePresence>
+
+        {settings?.menuPdfUrl && (
+          <div className="mt-20 pt-16 border-t border-coffee-brown/20 flex flex-col items-center text-center">
+            <h3 className="font-serif text-3xl font-bold text-espresso-dark mb-4">
+              {t('menu.download_pdf_title') || 'Download Our Full Menu'}
+            </h3>
+            <p className="text-gray-600 mb-8 max-w-xl text-lg font-light">
+              {t('menu.download_pdf_desc') || 'Want to keep a copy? Download our complete menu in PDF format to view all our offerings at your convenience.'}
+            </p>
+            <a
+              href={settings.menuPdfUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="bg-espresso-dark text-white px-10 py-5 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-coffee-brown transition-all shadow-xl hover:shadow-coffee-brown/40 flex items-center gap-3 transform hover:-translate-y-1"
+            >
+              <Download size={20} /> {t('menu.download_pdf') || 'Download Menu PDF'}
+            </a>
+          </div>
+        )}
       </div>
     </section>
+
   );
 }
 
-import { Coffee } from 'lucide-react';
+import { Coffee, Download } from 'lucide-react';
 
 interface MenuCardProps {
   item: MenuItem;

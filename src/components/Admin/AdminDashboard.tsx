@@ -1,8 +1,9 @@
+import { useEffect } from 'react';
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LogOut, Plus, Trash2, Edit2, Upload, Save, X, Image as ImageIcon, Coffee, Grid, Settings as SettingsIcon, Lock } from 'lucide-react';
 import { doc, setDoc, writeBatch } from 'firebase/firestore';
-import { auth, loginAnonymously, logout, db } from '../../lib/firebase';
+import { auth, loginWithGoogle, logout, db } from '../../lib/firebase';
 import { useCollection, useDocument, addDocument, updateDocument, removeDocument } from '../../lib/hooks';
 import { uploadMedia } from '../../lib/cloudinary';
 import { MenuItem } from '../../types';
@@ -12,37 +13,50 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
   const [user, setUser] = useState(auth.currentUser);
   const [activeTab, setActiveTab] = useState<'menu' | 'gallery' | 'settings'>('menu');
   const [isUploading, setIsUploading] = useState(false);
-  const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState('');
-  
-  // Cloudinary config stored in local storage for simplicity (or we could fetch from settings)
-  const [cloudName, setCloudName] = useState(
-    localStorage.getItem('cl_name') || 
-    process.env.VITE_CLOUDINARY_CLOUD_NAME || 
-    ''
-  );
-  const [uploadPreset, setUploadPreset] = useState(
-    localStorage.getItem('cl_preset') || 
-    process.env.VITE_CLOUDINARY_UPLOAD_PRESET || 
-    ''
-  );
+  const [searchQuery, setSearchQuery] = useState('');
+  const [cloudName, setCloudName] = useState(localStorage.getItem('cl_name') || process.env.VITE_CLOUDINARY_CLOUD_NAME || '');
+  const [uploadPreset, setUploadPreset] = useState(localStorage.getItem('cl_preset') || process.env.VITE_CLOUDINARY_UPLOAD_PRESET || '');
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((u) => {
+      if (u) {
+        if (u.isAnonymous || u.email !== 'dragonballsam86@gmail.com') {
+          logout();
+          setUser(null);
+        } else {
+          setUser(u);
+        }
+      } else {
+        setUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleCloudinarySave = () => {
+    localStorage.setItem('cl_name', cloudName);
+    localStorage.setItem('cl_preset', uploadPreset);
+    alert('Cloudinary settings saved locally.');
+  };
 
   const { data: menuItems } = useCollection<MenuItem>('menuItems', 'order');
   const { data: settings } = useDocument<any>('settings', 'global');
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
-    setError('');
     
-    if (loginForm.username === 'sam' && loginForm.password === '2006') {
-      try {
-        const u = await loginAnonymously();
-        setUser(u);
-      } catch (err) {
-        setError('Connection error. Please try again.');
+    try {
+      const u = await loginWithGoogle();
+      if (u.email !== 'dragonballsam86@gmail.com') {
+        await logout();
+        setError('Unauthorized email address.');
+        return;
       }
-    } else {
-      setError('Invalid username or password.');
+      setUser(u);
+    } catch (err) {
+      setError('Connection error. Please try again.');
     }
   };
 
@@ -59,33 +73,10 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
               <Lock className="text-coffee-brown" size={24} />
             </div>
             <h2 className="font-serif text-3xl font-bold text-espresso-dark">Admin Access</h2>
-            <p className="text-gray-500 text-sm mt-2">Enter your credentials to manage the website.</p>
+            <p className="text-gray-500 text-sm mt-2">Sign in with your admin Google account.</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block">Username</label>
-              <input 
-                type="text"
-                value={loginForm.username}
-                onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
-                className="w-full bg-warm-bg px-5 py-4 rounded-2xl outline-none focus:ring-2 focus:ring-coffee-brown/20 transition-all font-medium"
-                placeholder="Enter name"
-                required
-              />
-            </div>
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block">Password</label>
-              <input 
-                type="password"
-                value={loginForm.password}
-                onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                className="w-full bg-warm-bg px-5 py-4 rounded-2xl outline-none focus:ring-2 focus:ring-coffee-brown/20 transition-all font-medium"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-            
             {error && (
               <p className="text-red-500 text-xs font-bold text-center">{error}</p>
             )}
@@ -94,7 +85,7 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
               type="submit"
               className="w-full bg-coffee-brown text-white py-4 rounded-2xl font-bold uppercase tracking-widest hover:bg-espresso-dark transition-all shadow-lg hover:shadow-coffee-brown/20 active:scale-[0.98]"
             >
-              Sign In
+              Sign In with Google
             </button>
           </form>
 
@@ -106,11 +97,6 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
     );
   }
 
-  const handleCloudinarySave = () => {
-    localStorage.setItem('cl_name', cloudName);
-    localStorage.setItem('cl_preset', uploadPreset);
-    alert('Cloudinary settings saved locally.');
-  };
 
   return (
     <div className="fixed inset-0 z-[100] bg-warm-bg overflow-y-auto">
@@ -133,24 +119,17 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
 
       <main className="max-w-6xl mx-auto p-8">
         {activeTab === 'menu' && (
-          <MenuManager 
-            items={menuItems} 
-            cloudName={cloudName} 
-            uploadPreset={uploadPreset} 
-          />
+          <MenuManager items={menuItems} settings={settings} cloudName={cloudName} uploadPreset={uploadPreset} />
         )}
 
 
         {activeTab === 'gallery' && (
-          <GalleryManager 
-            settings={settings} 
-            cloudName={cloudName} 
-            uploadPreset={uploadPreset} 
-          />
+          <GalleryManager settings={settings} cloudName={cloudName} uploadPreset={uploadPreset} />
         )}
 
         {activeTab === 'settings' && (
           <div className="space-y-12">
+
              <section className="bg-white p-8 rounded-[32px] shadow-sm">
                 <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
                   <Upload size={20} className="text-coffee-brown" /> 
@@ -185,12 +164,13 @@ export default function AdminDashboard({ onClose }: { onClose: () => void }) {
                 </button>
              </section>
 
-             <HeroManager settings={settings} cloudName={cloudName} uploadPreset={uploadPreset} />
-             <AboutManager settings={settings} cloudName={cloudName} uploadPreset={uploadPreset} />
 
-             <LogoManager settings={settings} cloudName={cloudName} uploadPreset={uploadPreset} />
+             <HeroManager settings={settings}  cloudName={cloudName} uploadPreset={uploadPreset} />
+             <AboutManager settings={settings}  cloudName={cloudName} uploadPreset={uploadPreset} />
 
-             <LoyaltyManager settings={settings} cloudName={cloudName} uploadPreset={uploadPreset} />
+             <LogoManager settings={settings}  cloudName={cloudName} uploadPreset={uploadPreset} />
+
+             <LoyaltyManager settings={settings}  cloudName={cloudName} uploadPreset={uploadPreset} />
           </div>
         )}
       </main>
@@ -204,17 +184,14 @@ function LoyaltyManager({ settings, cloudName, uploadPreset }: any) {
 
   const handleUpload = async (e: any) => {
     const file = e.target.files?.[0];
-    if (!file || !cloudName || !uploadPreset) return console.error('Check Cloudinary Config');
+    e.target.value = '';
+    if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
     try {
-      const url = await uploadMedia(file, cloudName, uploadPreset);
-      const isVideo = file.type.startsWith('video/');
-      if (isVideo) {
-        await setDoc(doc(db, 'settings', 'global'), { ...settings, heroVideo: url, heroImage: '' }, { merge: true });
-      } else {
-        await setDoc(doc(db, 'settings', 'global'), { ...settings, heroImage: url, heroVideo: '' }, { merge: true });
-      }
+      const url = await uploadMedia(file, cloudName, uploadPreset, (p) => setUploadProgress(p));
+      
+      await setDoc(doc(db, 'settings', 'global'), { ...settings, loyaltyImage: url }, { merge: true });
       setIsUploading(false);
-      if (e.target) e.target.value = '';
+      setUploadProgress(0);
     } catch (err: any) { console.error(err.message); }
   };
 
@@ -260,12 +237,13 @@ function LogoManager({ settings, cloudName, uploadPreset }: any) {
 
   const handleUpload = async (e: any) => {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
     try {
       const url = await uploadMedia(file, cloudName, uploadPreset);
       await setDoc(doc(db, 'settings', 'global'), { ...settings, logoUrl: url }, { merge: true });
       alert('Logo updated successfully!');
-    } catch (err: any) { if (e.target) e.target.value = ''; alert(err.message); }
+    } catch (err: any) { alert(err.message); }
   };
 
   return (
@@ -319,7 +297,7 @@ function TabButton({ active, onClick, icon, label }: any) {
   );
 }
 
-function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
+function MenuManager({ items: dbItems, cloudName, uploadPreset, settings }: any) {
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -344,7 +322,6 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
         name: editingItem.name,
         price: editingItem.price,
         category: editingItem.category,
-        description: editingItem.description || '',
         image: editingItem.image,
         order: editingItem.order ?? items.length
       });
@@ -372,12 +349,39 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
     filteredItems = filteredItems.filter((item: any) => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }
 
+  
+  const handlePdfUpload = async (e: any) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
+    setIsUploading(true);
+    try {
+      const url = await uploadMedia(file, cloudName, uploadPreset, (p) => {
+        const el = document.getElementById('pdfProgress');
+        if (el) el.innerText = 'Uploading ' + p + '%';
+      });
+      if (!url) throw new Error('Failed to get a valid URL from Cloudinary');
+      await setDoc(doc(db, 'settings', 'global'), { ...settings, menuPdfUrl: url }, { merge: true });
+      alert('PDF uploaded successfully!');
+    } catch (err: any) {
+      alert('Upload failed: ' + (err.message || 'Unknown error'));
+    } finally {
+      setIsUploading(false);
+      const el = document.getElementById('pdfProgress');
+      if (el) el.innerText = 'Upload PDF';
+    }
+  };
+
+  const handleRemovePdf = async () => {
+    await setDoc(doc(db, 'settings', 'global'), { ...settings, menuPdfUrl: null }, { merge: true });
+  };
+
+
   const handleClearAllImages = async () => {
     try {
       for (const item of items) {
         if (item.image) {
           const { id, ...data } = item;
-          await addDocument('menuItems', id, { ...data, image: '' });
         }
       }
       console.log('All menu images cleared successfully!');
@@ -388,6 +392,7 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
 
   const handleImageUpload = async (e: any) => {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
     
     setIsUploading(true);
@@ -399,7 +404,6 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
     } finally {
       setIsUploading(false);
       // Reset input value to allow the same file to be selected again
-      if (e.target) e.target.value = '';
     }
   };
 
@@ -423,11 +427,28 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
             </button>
           )}
           <button 
-            onClick={() => setEditingItem({ id: 'new', name: '', price: '', category: 'Coffee', description: '', image: '' })}
             className="bg-coffee-brown text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold uppercase tracking-widest text-xs"
           >
             <Plus size={16} /> Add Item
           </button>
+        </div>
+      </div>
+
+      
+      <div className="bg-white p-6 rounded-[24px] shadow-sm mb-8 border border-beige-light">
+        <h3 className="font-bold text-espresso-dark mb-2">Downloadable Menu PDF</h3>
+        <p className="text-sm text-gray-500 mb-4">Upload a PDF version of your menu for clients to download directly from the website.</p>
+        <div className="flex items-center gap-4">
+          <label className="bg-warm-bg border border-beige-light px-6 py-3 rounded-xl flex items-center gap-2 font-bold uppercase tracking-widest text-xs cursor-pointer hover:bg-beige-light transition-all text-coffee-brown">
+            <Upload size={16} /> <span id="pdfProgress">{isUploading ? "Uploading..." : "Upload PDF"}</span>
+            <input type="file" className="hidden" accept="application/pdf" onChange={handlePdfUpload} disabled={isUploading} />
+          </label>
+          {settings?.menuPdfUrl && (
+            <div className="flex items-center gap-4">
+              <a href={settings.menuPdfUrl} target="_blank" rel="noreferrer" className="text-sm font-medium text-coffee-brown underline">View Current PDF</a>
+              <button onClick={handleRemovePdf} className="text-red-500 hover:text-red-700" title="Remove PDF"><Trash2 size={16} /></button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -498,7 +519,6 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset }: any) {
                 <label className="text-xs font-bold uppercase text-gray-400">Item Image</label>
                 <div 
                   onClick={() => !isUploading && fileRef.current?.click()}
-                  className={`aspect-video bg-warm-bg rounded-2xl overflow-hidden cursor-pointer flex items-center justify-center border-2 border-dashed border-beige-light group relative ${isUploading ? 'opacity-50 cursor-wait' : ''}`}
                 >
                   {isUploading ? (
                     <div className="flex flex-col items-center">
@@ -602,13 +622,13 @@ function AboutManager({ settings, cloudName, uploadPreset }: any) {
   const [isUploading, setIsUploading] = useState(false);
   const handleUpload = async (e: any) => {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
     setIsUploading(true);
     try {
       const url = await uploadMedia(file, cloudName, uploadPreset);
       await setDoc(doc(db, 'settings', 'global'), { ...settings, atmosphereImage: url }, { merge: true });
       setIsUploading(false);
-      if (e.target) e.target.value = '';
     } catch (err: any) { setIsUploading(false); alert(err.message); }
   };
   return (
@@ -649,24 +669,26 @@ function HeroManager({ settings, cloudName, uploadPreset }: any) {
 
   const handleUpload = async (e: any) => {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
     setIsUploading(true);
     try {
       const url = await uploadMedia(file, cloudName, uploadPreset);
+      
       const isVideo = file.type.startsWith('video/');
       if (isVideo) {
-        await setDoc(doc(db, 'settings', 'global'), { ...settings, heroVideo: url, heroImage: '' }, { merge: true });
+        await setDoc(doc(db, 'settings', 'global'), { ...settings, heroVideo: url, heroImage: null }, { merge: true });
       } else {
-        await setDoc(doc(db, 'settings', 'global'), { ...settings, heroImage: url, heroVideo: '' }, { merge: true });
+        await setDoc(doc(db, 'settings', 'global'), { ...settings, heroImage: url, heroVideo: null }, { merge: true });
       }
       setIsUploading(false);
-      if (e.target) e.target.value = '';
     } catch (err: any) { setIsUploading(false); alert(err.message); }
   };
 
   const handleUpdateText = async (e: any) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.target));
+    if (data.mobileVideoPositionX) (data as any).mobileVideoPositionX = Number(data.mobileVideoPositionX);
     await setDoc(doc(db, 'settings', 'global'), { ...settings, ...data }, { merge: true });
     alert('Settings updated');
   };
@@ -709,6 +731,40 @@ function HeroManager({ settings, cloudName, uploadPreset }: any) {
             <label className="text-xs font-bold uppercase text-gray-400 block mb-2">Hero Subtitle</label>
             <textarea name="heroSubtitle" defaultValue={settings?.heroSubtitle} className="w-full border border-beige-light rounded-xl px-4 py-3 h-24" />
           </div>
+          
+          <div className="pt-6 border-t border-beige-light">
+            <label className="text-xs font-bold uppercase text-gray-400 block mb-2">Mobile Video Display Mode</label>
+            <select name="mobileVideoFit" defaultValue={settings?.mobileVideoFit || 'cover'} className="w-full border border-beige-light rounded-xl px-4 py-3 bg-white">
+              <option value="cover">Fill Screen (Cropped, no borders)</option>
+              <option value="contain">Show Entire Video (Adds black bars)</option>
+            </select>
+          </div>
+
+          <div className="pt-6 border-t border-beige-light">
+            <label className="text-xs font-bold uppercase text-gray-400 block mb-2">Mobile Video Alignment (Left/Right)</label>
+            <p className="text-[10px] text-gray-500 mb-3">Adjust how the video is positioned on mobile devices. (0 = Left, 50 = Center, 100 = Right)</p>
+            <div className="flex items-center gap-4">
+              <input 
+                type="range" 
+                min="0" 
+                max="100" 
+                name="mobileVideoPositionX" 
+                defaultValue={settings?.mobileVideoPositionX ?? 15}
+                className="w-full accent-coffee-brown"
+                onChange={(e) => {
+                  document.getElementById('posVal')!.innerText = e.target.value + '%';
+                }}
+                onMouseUp={async (e: any) => {
+                  await setDoc(doc(db, 'settings', 'global'), { ...settings, mobileVideoPositionX: Number(e.target.value) }, { merge: true });
+                }}
+                onTouchEnd={async (e: any) => {
+                  await setDoc(doc(db, 'settings', 'global'), { ...settings, mobileVideoPositionX: Number(e.target.value) }, { merge: true });
+                }}
+              />
+              <span id="posVal" className="text-xs font-bold text-coffee-brown w-10">{settings?.mobileVideoPositionX ?? 15}%</span>
+            </div>
+          </div>
+
           <button type="submit" className="w-full bg-coffee-brown text-white py-4 rounded-xl font-bold uppercase tracking-widest text-sm">Save Text</button>
         </form>
       </div>
@@ -719,6 +775,7 @@ function HeroManager({ settings, cloudName, uploadPreset }: any) {
 function GalleryManager({ settings, cloudName, uploadPreset }: any) {
   const handleUpload = async (e: any) => {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
     try {
       const url = await uploadMedia(file, cloudName, uploadPreset);

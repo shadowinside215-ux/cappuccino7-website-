@@ -1,4 +1,13 @@
+const fs = require('fs');
+let text = fs.readFileSync('src/components/Hero.tsx', 'utf-8');
 
+// I will add a tailwind screen break in style:
+// The issue is that the inline style overrides everything. 
+// I should only apply it for mobile, or apply a desktop default. 
+// The easiest way is using a window.innerWidth check or responsive design in style.
+// Let's use a simple state to track mobile vs desktop.
+
+const updated = `
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { useDocument } from '../lib/hooks';
@@ -38,8 +47,7 @@ export default function Hero() {
     video = video.replace('/upload/', '/upload/f_auto,q_auto/');
   }
 
-  const objPos = isMobile ? `${settings?.mobileVideoPositionX ?? 15}% center` : 'center top';
-  const objectFit = (isMobile && settings?.mobileVideoFit === 'contain') ? 'contain' : 'cover';
+  const objPos = isMobile ? \`\${settings?.mobileVideoPositionX ?? 15}% center\` : 'center top';
 
   return (
     <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden [perspective:1000px]">
@@ -57,14 +65,14 @@ export default function Hero() {
             loop
             muted
             playsInline
-            className={`w-full h-full ${objectFit === 'contain' ? 'object-contain bg-black' : 'object-cover'}   transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none`}
+            className={\`w-full h-full object-cover  transition-opacity duration-500 \${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none\`}
           />
         ) : (
           <img
             style={{ objectPosition: objPos }}
             src={image}
             alt="Cappuccino 7 Cafe"
-            className={`w-full h-full ${objectFit === 'contain' ? 'object-contain bg-black' : 'object-cover'}   scale-[1.05] md:scale-[1.10] origin-center transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none`}
+            className={\`w-full h-full object-cover  scale-[1.05] md:scale-[1.10] origin-center transition-opacity duration-500 \${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none\`}
             referrerPolicy="no-referrer"
           />
         )}
@@ -124,3 +132,5 @@ export default function Hero() {
     </section>
   );
 }
+`;
+fs.writeFileSync('src/components/Hero.tsx', updated);

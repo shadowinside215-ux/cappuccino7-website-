@@ -12,9 +12,8 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      // In this specific app, admin access is granted to anyone who signs in 
-      // (authenticated via the frontend name/password gate + signInAnonymously)
-      return isSignedIn();
+      // Only allow the specific admin email
+      return isSignedIn() && request.auth.token.email == 'dragonballsam86@gmail.com';
     }
 
     function isValidId(id) {
