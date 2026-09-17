@@ -43,15 +43,12 @@ export default function LoyaltySection() {
               
             </div>
             
-            <a 
-              href="https://cappuccino7-alpha.vercel.app/" 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-8 bg-coffee-brown text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-coffee-brown transition-all shadow-xl hover:shadow-white/10 group"
+            <button 
+              disabled
+              className="inline-flex items-center gap-3 px-8 bg-coffee-brown/70 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-sm cursor-not-allowed shadow-xl group"
             >
               <span>{t('loyalty.access')}</span>
-              <ArrowRight size={18} className={`group-hover:translate-x-1 transition-transform ${isRTL ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
-            </a>
+            </button>
           </motion.div>
         </div>
 

@@ -9,7 +9,7 @@ export default function Footer() {
 
   const logoUrl = settings?.logoUrl || "/input_file_1.png";
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleNavClick = (e: any, href: string) => {
     e.preventDefault();
     if (href === '#') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -63,7 +63,7 @@ export default function Footer() {
         <div className="border-t border-beige-light/30 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-xs text-gray-400 tracking-wider uppercase font-medium">{t('footer.rights')}</p>
           <div className={`flex space-x-6 text-[10px] uppercase tracking-widest font-bold text-gray-400 ${isRTL ? 'space-x-reverse' : ''}`}>
-
+            {/* <button onClick={() => (window as any).toggleAdmin()} className="hover:text-espresso-dark transition-colors">Admin</button> */}
           </div>
         </div>
       </div>

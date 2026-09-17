@@ -51,8 +51,8 @@ export default function LocationAndContact() {
                 <div>
                   <h4 className="font-bold text-espresso-dark uppercase tracking-widest text-sm mb-1">{t('location.phone.title')}</h4>
                   <p className="text-gray-600 font-light">
-                    <a href="tel:+212777305155" className="hover:text-coffee-brown transition-colors underline decoration-beige-light hover:decoration-coffee-brown">
-                      +212 7 77 30 51 55
+                    <a href="tel:0672219136" className="hover:text-coffee-brown transition-colors underline decoration-beige-light hover:decoration-coffee-brown">
+                      06 72 21 91 36
                     </a>
                   </p>
                 </div>
@@ -69,7 +69,7 @@ export default function LocationAndContact() {
             </div>
 
             <a 
-              href="https://www.google.com/maps/search/?api=1&query=Cappuccino+7,+Salé+El+Jadida"
+              href="https://www.google.com/maps/search/?api=1&query=Cappuccino+7,+Sala+El+Jadida"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center space-x-3 bg-espresso-dark text-white px-8 py-4 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-coffee-brown transition-all shadow-lg"
@@ -95,7 +95,7 @@ export default function LocationAndContact() {
                 marginHeight={0} 
                 marginWidth={0} 
                 title="Cappuccino 7 Location"
-                src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=Avenue%20Moulay%20Rachid,%20Taha%20Palace,%20Sal%C3%A9,%20Morocco+(Cappuccino%207)&t=&z=14&ie=UTF8&iwloc=B&output=embed"
+                src="https://maps.google.com/maps?width=100%25&height=600&hl=en&q=Cappuccino%207,%20Sala%20Al%20Jadida,%20Morocco&t=&z=15&ie=UTF8&iwloc=B&output=embed"
                 className="grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
               />
               <div className="absolute inset-0 pointer-events-none border-[12px] border-white rounded-[32px]" />

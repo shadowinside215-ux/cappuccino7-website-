@@ -16,7 +16,7 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleNavClick = (e: any, href: string) => {
     e.preventDefault();
     setIsOpen(false);
     
@@ -98,7 +98,7 @@ export default function Navbar() {
           </div>
 
           <a
-            href="tel:+212777305155"
+            href="tel:0672219136"
             className="flex items-center space-x-2 bg-coffee-brown text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-espresso-dark transition-all"
           >
             <Phone size={16} />
@@ -147,7 +147,7 @@ export default function Navbar() {
                 </a>
               ))}
               <a
-                href="tel:+212777305155"
+                href="tel:0672219136"
                 className="flex items-center justify-center space-x-2 bg-coffee-brown text-white w-full py-3 rounded-xl"
               >
                 <Phone size={18} />

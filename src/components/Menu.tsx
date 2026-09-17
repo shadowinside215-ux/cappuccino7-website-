@@ -72,21 +72,7 @@ export default function MenuSection() {
             transition={{ duration: 0.3 }}
             className="flex flex-col gap-10"
           >
-            {settings?.categoryImages?.[activeCategory] && (
-              <div className="w-full rounded-[32px] overflow-hidden relative shadow-lg bg-transparent">
-                <img 
-                  src={settings.categoryImages[activeCategory]} 
-                  alt={activeCategory} 
-                  className="w-full h-auto block"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                  <h3 className="text-white font-serif text-3xl md:text-5xl font-bold tracking-wider uppercase drop-shadow-lg">
-                    {activeCategory}
-                  </h3>
-                </div>
-              </div>
-            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredItems.map((item: MenuItem) => (
                 <div key={item.id}>
