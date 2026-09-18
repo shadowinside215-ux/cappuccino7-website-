@@ -1,3 +1,4 @@
+import AnimatedHeading from './AnimatedHeading';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MENU_ITEMS } from '../constants';
@@ -44,9 +45,9 @@ export default function MenuSection() {
           <span className="text-coffee-brown font-medium uppercase tracking-widest text-sm mb-4 block">
             {t('menu.subtitle')}
           </span>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-espresso-dark">
-            {t('menu.title')}
-          </h2>
+          <div className="font-serif text-4xl md:text-5xl font-bold mb-6 text-espresso-dark flex justify-center">
+            <AnimatedHeading text={t('menu.title')} tag="h2" className="text-espresso-dark justify-center" />
+          </div>
           <div className="w-24 h-1 bg-coffee-brown mx-auto rounded-full mb-8" />
           
           {/* Category Filter */}

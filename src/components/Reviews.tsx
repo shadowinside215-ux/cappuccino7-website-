@@ -1,3 +1,4 @@
+import AnimatedHeading from './AnimatedHeading';
 import { motion } from 'motion/react';
 import { Star, Quote } from 'lucide-react';
 import { REVIEWS } from '../constants';
@@ -18,9 +19,9 @@ export default function Reviews() {
               <Star key={i} size={20} fill={i < 4 ? "currentColor" : "none"} className="text-latte-cream" />
             ))}
           </div>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-4">
-            {t('reviews.title')}
-          </h2>
+          <div className="font-serif text-4xl md:text-5xl font-bold mb-4 flex justify-center">
+            <AnimatedHeading text={t('reviews.title')} tag="h2" className="text-white justify-center" />
+          </div>
           <p className="text-white/60 uppercase tracking-widest text-xs font-semibold">
             {t('reviews.subtitle')}
           </p>

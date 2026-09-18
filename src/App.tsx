@@ -1,3 +1,4 @@
+import AmbientGlow from './components/AmbientGlow';
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -18,7 +19,6 @@ import Footer from './components/Footer';
 import { I18nProvider } from './lib/i18n';
 import { useDocument } from './lib/hooks';
 import { Coffee } from 'lucide-react';
-import AdminDashboard from './components/Admin/AdminDashboard';
 
 export default function App() {
   
@@ -54,9 +54,9 @@ export default function App() {
         ) : null}
         
         
-        {showAdmin && <AdminDashboard onClose={() => setShowAdmin(false)} />}
-        <Navbar />
-        <main>
+                <Navbar />
+        <main className="relative">
+          <AmbientGlow />
           <Hero />
           <About />
           <MenuSection />

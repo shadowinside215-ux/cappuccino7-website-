@@ -187,11 +187,10 @@ function LoyaltyManager({ settings, cloudName, uploadPreset }: any) {
     e.target.value = '';
     if (!file || !cloudName || !uploadPreset) return alert('Check Cloudinary Config');
     try {
-      const url = await uploadMedia(file, cloudName, uploadPreset, (p) => setUploadProgress(p));
+      const url = await uploadMedia(file, cloudName, uploadPreset);
       
       await setDoc(doc(db, 'settings', 'global'), { ...settings, loyaltyImage: url }, { merge: true });
       setIsUploading(false);
-      setUploadProgress(0);
     } catch (err: any) { console.error(err.message); }
   };
 

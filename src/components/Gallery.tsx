@@ -1,3 +1,4 @@
+import AnimatedHeading from './AnimatedHeading';
 import { motion } from 'motion/react';
 import { GALLERY_IMAGES } from '../constants';
 import { useDocument } from '../lib/hooks';
@@ -25,37 +26,54 @@ export default function Gallery() {
             <span className="text-coffee-brown font-medium uppercase tracking-widest text-sm mb-4 block">
               {t('gallery.subtitle')}
             </span>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-espresso-dark">
-              {t('gallery.title')}
-            </h2>
+            <div className="font-serif text-4xl md:text-5xl font-bold text-espresso-dark">
+              <AnimatedHeading text={t('gallery.title')} tag="h2" className="text-espresso-dark" />
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {/* Main big image */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {images.map((img: any, idx: number) => (
+            <motion.div
+              key={img.id || idx}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: (idx % 4) * 0.1 }}
+              className={`aspect-square rounded-[32px] overflow-hidden shadow-lg relative group bg-warm-bg ${
+                idx === 0 ? 'sm:col-span-2 sm:row-span-2 aspect-auto' : ''
+              }`}
+            >
+              <img
+                src={img.url}
+                alt={img.alt || "Gallery image"}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                <span className="text-white text-sm font-bold uppercase tracking-wider">Cappuccino 7</span>
+              </div>
+            </motion.div>
+          ))}
+
+          {/* Social Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="col-span-2 row-span-2 aspect-[4/5] md:aspect-square rounded-[32px] overflow-hidden shadow-lg relative group"
-          >
-            <img 
-              src={images[0]?.url || "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=800"} 
-              alt="Gallery"
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-              referrerPolicy="no-referrer"
-            />
-          </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="hidden md:flex aspect-square rounded-[24px] bg-beige-light/30 items-center justify-center p-8 text-center"
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="aspect-square rounded-[32px] bg-warm-bg flex items-center justify-center p-8 text-center border border-beige-light hover:shadow-xl transition-all"
           >
             <div>
               <p className="font-serif italic text-espresso-dark text-xl mb-4">{t('gallery.social')}</p>
-              <a href="https://www.instagram.com/cappuccino7.mahajsala?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="text-coffee-brown font-bold uppercase tracking-widest text-xs hover:underline">@cappuccino7.ma</a>
+              <a 
+                href="https://www.instagram.com/cappuccino7.mahajsala?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-coffee-brown font-bold uppercase tracking-widest text-xs hover:underline"
+              >
+                @cappuccino7.ma
+              </a>
             </div>
           </motion.div>
         </div>

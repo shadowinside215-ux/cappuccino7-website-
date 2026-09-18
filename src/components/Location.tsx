@@ -1,3 +1,4 @@
+import AnimatedHeading from './AnimatedHeading';
 import { motion } from 'motion/react';
 import { MapPin, Navigation, Phone, Clock, Instagram, Facebook } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
@@ -18,9 +19,9 @@ export default function LocationAndContact() {
             <span className="text-coffee-brown font-medium uppercase tracking-widest text-sm mb-4 block">
               {t('location.subtitle')}
             </span>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-8 text-espresso-dark">
-              {t('location.title')}
-            </h2>
+            <div className="font-serif text-4xl md:text-5xl font-bold mb-8 text-espresso-dark">
+              <AnimatedHeading text={t('location.title')} tag="h2" className="text-espresso-dark" />
+            </div>
             
             <div className="space-y-8 mb-12">
               <div className={`flex items-start ${isRTL ? 'flex-row-reverse space-x-reverse' : 'flex-row'} space-x-6`}>

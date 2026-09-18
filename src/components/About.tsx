@@ -1,22 +1,17 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Star, Coffee, Users, Clock, Edit2, Check, X, Camera } from 'lucide-react';
+import { Star, Coffee, Users, Clock, Check, X } from 'lucide-react';
 import { useDocument, updateDocument } from '../lib/hooks';
-import { auth } from '../lib/firebase';
-
 import { useTranslation } from '../lib/i18n';
+import AnimatedHeading from './AnimatedHeading';
 
 export default function About() {
   const { data: settings, loading } = useDocument<any>('settings', 'global');
-  
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [tempNote, setTempNote] = useState('');
   const [tempAuthor, setTempAuthor] = useState('');
   const isUploading = false;
-  
   const { t, isRTL } = useTranslation();
-
-  
 
   if (loading) {
     return <div className="py-24 px-4 bg-white flex items-center justify-center">
@@ -33,7 +28,7 @@ export default function About() {
 
   const handleSaveNote = async () => {
     try {
-      await updateDocument('settings', 'global', { 
+      await updateDocument('settings', 'global', {
         atmosphereQuote: tempNote,
         atmosphereAuthor: tempAuthor
       });
@@ -42,8 +37,6 @@ export default function About() {
       // Handled by updateDocument
     }
   };
-
-  
 
   const quote = settings?.atmosphereQuote || t('gallery.title');
   const author = settings?.atmosphereAuthor || "— Regular Guest";
@@ -62,57 +55,84 @@ export default function About() {
             <span className="text-coffee-brown font-medium uppercase tracking-widest text-sm mb-4 block">
               {t('nav.about')}
             </span>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-8 text-espresso-dark">
-              {t('about.title')}
-            </h2>
-            <p className="text-gray-600 text-lg leading-relaxed mb-8 font-light">
+            <div className="font-serif text-4xl md:text-5xl font-bold mb-8 text-espresso-dark">
+              <AnimatedHeading text={t('about.title')} tag="h2" className="text-espresso-dark" />
+            </div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-gray-600 text-lg leading-relaxed mb-8 font-light"
+            >
               {t('about.p1')}
-            </p>
-            <p className="text-gray-600 text-lg leading-relaxed mb-12 font-light">
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-gray-600 text-lg leading-relaxed mb-12 font-light"
+            >
               {t('about.p2')}
-            </p>
-
+            </motion.p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, idx) => (
-                <div key={idx} className="text-center">
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 * idx }}
+                  className="text-center p-4 rounded-2xl bg-warm-bg/40 hover:bg-white hover:shadow-lg transition-all"
+                >
                   <div className="flex justify-center mb-3">{stat.icon}</div>
                   <div className="text-2xl font-bold text-espresso-dark">{stat.value}</div>
-                  <div className="text-xs text-gray-500 uppercase tracking-tighter">{stat.label}</div>
-                </div>
+                  <div className="text-xs text-gray-500 uppercase tracking-tighter mt-1">{stat.label}</div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
+            whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             className="relative"
           >
             <div className={`aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl relative z-10 transition-all ${isUploading ? 'opacity-50' : ''}`}>
               <img
                 src={atmosphereImage}
                 alt="Cafe Atmosphere"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 referrerPolicy="no-referrer"
               />
-              
             </div>
-            
-            <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-latte-cream/20 rounded-[40px] -z-0 rotate-12" />
+
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-10 -right-10 w-64 h-64 bg-latte-cream/30 rounded-[40px] -z-0 rotate-12"
+            />
             <div className="absolute -top-10 -left-10 w-40 h-40 border-2 border-coffee-brown/20 rounded-full -z-0" />
-            
-            <div className="absolute bottom-8 left-8 bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl z-20 max-w-[240px] group">
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="absolute bottom-8 left-8 bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl z-20 max-w-[240px] group border border-beige-light"
+            >
               {isEditingNote ? (
                 <div className="space-y-3">
-                  <textarea 
+                  <textarea
                     value={tempNote}
                     onChange={(e) => setTempNote(e.target.value)}
                     className="w-full bg-white/50 p-2 rounded-lg text-sm font-serif italic outline-none border border-coffee-brown/20"
                     rows={3}
                   />
-                  <input 
+                  <input
                     value={tempAuthor}
                     onChange={(e) => setTempAuthor(e.target.value)}
                     className="w-full bg-white/50 p-2 rounded-lg text-[10px] uppercase font-bold outline-none border border-coffee-brown/20"
@@ -128,10 +148,9 @@ export default function About() {
                     "{quote}"
                   </p>
                   <p className="mt-2 text-xs font-bold uppercase tracking-widest text-coffee-brown">{author}</p>
-                  
                 </>
               )}
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>

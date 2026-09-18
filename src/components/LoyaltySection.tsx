@@ -1,3 +1,4 @@
+import AnimatedHeading from './AnimatedHeading';
 import { motion } from 'motion/react';
 import { useTranslation } from '../lib/i18n';
 import { useDocument } from '../lib/hooks';
@@ -30,10 +31,10 @@ export default function LoyaltySection() {
               <span>{t('menu.app') || 'Cappuccino 7 App'}</span>
             </div>
             
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight">
-              {t('loyalty.title')} <br />
+            <div className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight">
+              <AnimatedHeading text={t('loyalty.title')} tag="h2" className="text-white" />
               <span className="text-coffee-brown">{t('loyalty.subtitle')}</span>
-            </h2>
+            </div>
             
             <p className="text-gray-300 text-lg leading-relaxed mb-10">
               {t('menu.loyalty.desc') || 'Collect stamps and get free drinks! Download our app today and enjoy exclusive rewards tailored just for you.'}
