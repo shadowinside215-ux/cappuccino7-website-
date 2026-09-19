@@ -303,12 +303,23 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset, settings }: any)
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Merge hardcoded items with DB items
-  const items = [...dbItems];
-  MENU_ITEMS.forEach(localItem => {
-    if (!items.find(i => i.id === localItem.id)) {
-      items.push(localItem);
-    }
+  // Merge hardcoded items with DB items with deduplication
+  const items: any[] = [];
+  const seenAdminIds = new Set<string>();
+  const seenAdminNames = new Set<string>();
+
+  const normAdmin = (str: string) =>
+    (str || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+
+  [...dbItems, ...MENU_ITEMS].forEach(localItem => {
+    if (!localItem) return;
+    const id = localItem.id ? String(localItem.id).trim() : '';
+    const nameNorm = normAdmin(localItem.name);
+    if (id && seenAdminIds.has(id)) return;
+    if (nameNorm && seenAdminNames.has(nameNorm)) return;
+    if (id) seenAdminIds.add(id);
+    if (nameNorm) seenAdminNames.add(nameNorm);
+    items.push(localItem);
   });
 
   const handleSave = async (e: any) => {
@@ -476,8 +487,8 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset, settings }: any)
         ))}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredItems.map((item: any) => (
-          <div key={item.id} className="bg-white p-6 rounded-[32px] shadow-sm relative group">
+        {filteredItems.map((item: any, idx: number) => (
+          <div key={item.id ? `${item.id}-${idx}` : idx} className="bg-white p-6 rounded-[32px] shadow-sm relative group">
             <div className="aspect-square rounded-2xl overflow-hidden mb-4 bg-warm-bg font-light text-espresso-dark flex items-center justify-center">
               {item.image ? (
                 <img src={item.image} className="w-full h-full object-cover" referrerPolicy="no-referrer" />

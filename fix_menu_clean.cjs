@@ -1,27 +1,31 @@
 const fs = require('fs');
-let text = fs.readFileSync('src/components/Menu.tsx', 'utf-8');
 
-const regex = /\{settings\?\.menuPdfUrl\s*&&\s*\(\s*<div.*?<\/div>\s*\)\s*\}/gs;
-text = text.replace(regex, '');
+let content = fs.readFileSync('src/components/Menu.tsx', 'utf-8');
 
-const pdfButton = `
-          {settings?.menuPdfUrl && (
-            <div className="flex justify-center mb-12">
-              <a
-                href={settings.menuPdfUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="bg-espresso-dark text-white px-8 py-4 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-coffee-brown transition-colors shadow-lg flex items-center gap-2 transform hover:-translate-y-1"
-              >
-                <Download size={16} /> {t('menu.download_pdf') || 'Download Menu PDF'}
-              </a>
-            </div>
-          )}
-`;
-
-text = text.replace(
-  "<AnimatePresence mode=\"wait\">",
-  pdfButton + "\n        <AnimatePresence mode=\"wait\">"
+// Replace the sorting hack with standard filtering
+content = content.replace(
+  `  let filteredItems = itemsToShow.filter((item) => item.category === activeCategory);
+  if (activeCategory === 'Breakfast') {
+    const priorityNames = [
+      'Ftour Chamali',
+      'Cappuccino7 Breakfast',
+      'Turkie',
+      'Occidental',
+      'Amazigh',
+      'Ftour Fassi',
+      'Healthy Breakfast'
+    ];
+    filteredItems.sort((a, b) => {
+      const indexA = priorityNames.findIndex(name => a.name.toLowerCase().includes(name.toLowerCase()));
+      const indexB = priorityNames.findIndex(name => b.name.toLowerCase().includes(name.toLowerCase()));
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      return 0;
+    });
+  }`,
+  `  const filteredItems = itemsToShow.filter((item) => item.category === activeCategory);`
 );
 
-fs.writeFileSync('src/components/Menu.tsx', text);
+fs.writeFileSync('src/components/Menu.tsx', content);
+console.log('Menu.tsx cleaned up!');

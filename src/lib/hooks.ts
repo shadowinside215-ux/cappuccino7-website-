@@ -61,8 +61,8 @@ export function useCollection<T = DocumentData>(path: string, orderField?: strin
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const items = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+        ...doc.data(),
+        id: doc.id
       })) as T[];
       setData(items);
       setLoading(false);

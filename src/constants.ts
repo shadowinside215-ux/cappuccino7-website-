@@ -10,9 +10,33 @@ export const COLORS = {
 
 export const MENU_ITEMS: MenuItem[] = [
   {
+    "id": "b5",
+    "name": "Ftour Chamali",
+    "description": "Œufs brouillés avec charcuterie et fromage blanc, panier de pain, jus d'orange, balboula, boisson chaude au choix, eau minérale.",
+    "price": "48dh",
+    "category": "Breakfast",
+    "image": ""
+  },
+  {
+    "id": "b7",
+    "name": "Cappuccino7 Breakfast",
+    "description": "Croque monsieur, hotdog, fromage blanc, salade (verte, tomate, maïs), crêpe Nutella, salade de fruits, jus d'orange, balboula, boisson chaude au choix, eau minérale.",
+    "price": "68dh",
+    "category": "Breakfast",
+    "image": ""
+  },
+  {
+    "id": "b9",
+    "name": "Turkie",
+    "description": "Œufs au plat brouillés, hash browns, tomate grillée.",
+    "price": "68dh",
+    "category": "Breakfast",
+    "image": ""
+  },
+  {
     "id": "b1",
     "name": "Occidental",
-    "description": "Deux viennoiseries, Jus d'orange, Balboula, Boisson chaude au choix, Eau minérale.",
+    "description": "Deux viennoiseries, jus d'orange, balboula, boisson chaude au choix, eau minérale.",
     "price": "38dh",
     "category": "Breakfast",
     "image": ""
@@ -20,8 +44,24 @@ export const MENU_ITEMS: MenuItem[] = [
   {
     "id": "b2",
     "name": "Amazigh",
-    "description": "Beghrir, Harcha, Meloui, Betbout, Amlou, Fromage, Miel, Jus d'orange, Balboula, Boisson chaude au choix, Eau minérale.",
+    "description": "Beghrir, harcha, meloui, betbout, amlou, fromage, miel, jus d'orange, balboula, boisson chaude au choix, eau minérale.",
     "price": "45dh",
+    "category": "Breakfast",
+    "image": ""
+  },
+  {
+    "id": "b4",
+    "name": "Ftour Fassi",
+    "description": "Œufs au khlii, huile d’olive, olives noires, panier de pain, jus d'orange, balboula, boisson chaude au choix, eau minérale.",
+    "price": "45dh",
+    "category": "Breakfast",
+    "image": ""
+  },
+  {
+    "id": "b8",
+    "name": "Healthy Breakfast",
+    "description": "Toast avocat & œufs, bol d’avoine (banane, chia, fruits secs), fruits de saison, yaourt, jus d’orange, balboula, boisson chaude au choix, eau minérale.",
+    "price": "60dh",
     "category": "Breakfast",
     "image": ""
   },
@@ -34,50 +74,10 @@ export const MENU_ITEMS: MenuItem[] = [
     "image": ""
   },
   {
-    "id": "b4",
-    "name": "Ftour Fassi",
-    "description": "Oeufs au khlii, Huile d'olive, Olives noires, Panier de pain, Jus d'orange, Belboula, Boisson chaude au choix,Eau minérale.",
-    "price": "58dh",
-    "category": "Breakfast",
-    "image": ""
-  },
-  {
-    "id": "b5",
-    "name": "Ftour Chamali",
-    "description": "Oeufs brouillés avec charcuterie et fromage blan, Panier de pain, Jus d'orange, Belboula, Boisson chaude au choix, Eau minérale.",
-    "price": "48dh",
-    "category": "Breakfast",
-    "image": ""
-  },
-  {
     "id": "b6",
     "name": "Omlette spéciale",
     "description": "Oeufs brouillés avec tomate cerise, Oignons, Dinde fumée, panier de pain, jus d'orange, Belboula, Boisson chaude au choix, Eau ménirale.",
     "price": "48dh",
-    "category": "Breakfast",
-    "image": ""
-  },
-  {
-    "id": "b7",
-    "name": "Cappuccino7 Breakfast",
-    "description": "croque Monsieur, Hotdog, Fromage blanc, (salade verte, tomate et maïs), Crêpes Nutella, salade fruits, jus d'orange, Belboula, Boisson chaude au choix, Eau ménirale.",
-    "price": "68dh",
-    "category": "Breakfast",
-    "image": ""
-  },
-  {
-    "id": "b8",
-    "name": "Healthy Breakfast",
-    "description": "Toast a la puree d'avocat et oeufs, Bol d'avoie à la bana ne, chia et fruits secs, Assortiment de fruits de saison, yaourt, Jus d'orane, Balboula, Boisson chaude au choix, Eau minerale.",
-    "price": "60dh",
-    "category": "Breakfast",
-    "image": ""
-  },
-  {
-    "id": "b9",
-    "name": "Turkie",
-    "description": "Oeufs au plat, Fromage Rouge, Fromage Blanc, Fromage Cheddar, Concombre, Salade Tomate, olives, hu ile d'olives,jambon, beurre, confiture, pain, Jus d'orange, Balboula, Boisson chaude au choix, Eau minerale.",
-    "price": "68dh",
     "category": "Breakfast",
     "image": ""
   },
@@ -123,904 +123,200 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     "id": "pf3",
-    "name": "Omlette Fromage Champignion",
+    "name": "Omlette Khlii",
     "description": "",
-    "price": "28dh",
+    "price": "32dh",
     "category": "Petites faims",
     "image": ""
   },
   {
     "id": "pf4",
-    "name": "Beghrir Amlou",
+    "name": "Omlette Thon / Dinde fumée",
     "description": "",
-    "price": "30dh",
+    "price": "28dh",
     "category": "Petites faims",
     "image": ""
   },
   {
     "id": "pf5",
-    "name": "Croque Monsieur",
+    "name": "Pancake",
     "description": "",
-    "price": "35dh",
+    "price": "25dh",
     "category": "Petites faims",
     "image": ""
   },
   {
     "id": "pf6",
-    "name": "Croque Madame",
+    "name": "Crêpe Nutella",
+    "description": "",
+    "price": "25dh",
+    "category": "Petites faims",
+    "image": ""
+  },
+  {
+    "id": "pf7",
+    "name": "Msemen ou Harcha ou Beghrir avec Miel / Confiture / Fromage / Amlou",
+    "description": "",
+    "price": "15dh",
+    "category": "Petites faims",
+    "image": ""
+  },
+  {
+    "id": "pf8",
+    "name": "Assortiment Beldi (Msemen, Harcha, Beghrir, Miel, Fromage, Amlou)",
     "description": "",
     "price": "35dh",
     "category": "Petites faims",
     "image": ""
   },
   {
-    "id": "ex1",
-    "name": "Eau minérale",
-    "description": "",
-    "price": "5dh",
-    "category": "Les extras",
-    "image": ""
-  },
-  {
-    "id": "ex2",
-    "name": "Dinde fumée",
-    "description": "",
-    "price": "15dh",
-    "category": "Les extras",
-    "image": ""
-  },
-  {
-    "id": "ex3",
-    "name": "Amlou",
-    "description": "",
-    "price": "10dh",
-    "category": "Les extras",
-    "image": ""
-  },
-  {
-    "id": "ex4",
-    "name": "Nutella",
+    "id": "tp1",
+    "name": "Café Noir",
     "description": "",
     "price": "12dh",
-    "category": "Les extras",
+    "category": "Boissons chaudes",
     "image": ""
   },
   {
-    "id": "ex5",
-    "name": "Confiture et miel",
+    "id": "tp2",
+    "name": "Café Cassé",
+    "description": "",
+    "price": "13dh",
+    "category": "Boissons chaudes",
+    "image": ""
+  },
+  {
+    "id": "tp3",
+    "name": "Café au Lait",
+    "description": "",
+    "price": "15dh",
+    "category": "Boissons chaudes",
+    "image": ""
+  },
+  {
+    "id": "tp4",
+    "name": "Café Viennois",
+    "description": "",
+    "price": "20dh",
+    "category": "Boissons chaudes",
+    "image": ""
+  },
+  {
+    "id": "tp5",
+    "name": "Chocolat Chaud",
+    "description": "",
+    "price": "20dh",
+    "category": "Boissons chaudes",
+    "image": ""
+  },
+  {
+    "id": "tp6",
+    "name": "Thé Marocain",
+    "description": "",
+    "price": "12dh",
+    "category": "Boissons chaudes",
+    "image": ""
+  },
+  {
+    "id": "tp7",
+    "name": "Lait Amande",
+    "description": "",
+    "price": "22dh",
+    "category": "Boissons chaudes",
+    "image": ""
+  },
+  {
+    "id": "tp8",
+    "name": "Verre de Lait",
     "description": "",
     "price": "10dh",
-    "category": "Les extras",
+    "category": "Boissons chaudes",
     "image": ""
   },
   {
-    "id": "ex6",
-    "name": "Jben",
+    "id": "tp9",
+    "name": "Infusion (Verveine / Thé vert)",
     "description": "",
-    "price": "10dh",
-    "category": "Les extras",
+    "price": "12dh",
+    "category": "Boissons chaudes",
     "image": ""
   },
   {
-    "id": "ex7",
-    "name": "Fromage rouge",
-    "description": "",
-    "price": "15dh",
-    "category": "Les extras",
-    "image": ""
-  },
-  {
-    "id": "ex8",
-    "name": "Huile d'olive",
-    "description": "",
-    "price": "10dh",
-    "category": "Les extras",
-    "image": ""
-  },
-  {
-    "id": "lb1",
-    "name": "Lait chaude",
-    "description": "",
-    "price": "14dh",
-    "category": "Les boissons",
-    "image": ""
-  },
-  {
-    "id": "lb2",
-    "name": "Espresso",
-    "description": "",
-    "price": "14dh",
-    "category": "Les boissons",
-    "image": ""
-  },
-  {
-    "id": "lb3",
-    "name": "Café americain",
-    "description": "",
-    "price": "15dh",
-    "category": "Les boissons",
-    "image": ""
-  },
-  {
-    "id": "lb4",
-    "name": "Lait parfumé",
-    "description": "",
-    "price": "14dh",
-    "category": "Les boissons",
-    "image": ""
-  },
-  {
-    "id": "lb5",
-    "name": "Café créme",
-    "description": "",
-    "price": "15dh",
-    "category": "Les boissons",
-    "image": ""
-  },
-  {
-    "id": "lb6",
-    "name": "Nespresso",
-    "description": "",
-    "price": "15dh",
-    "category": "Les boissons",
-    "image": ""
-  },
-  {
-    "id": "lb7",
-    "name": "Latté Macchiato",
-    "description": "",
-    "price": "16dh",
-    "category": "Les boissons",
-    "image": ""
-  },
-  {
-    "id": "lb8",
-    "name": "Double Espresso",
+    "id": "bc1",
+    "name": "Jus d'Orange Pressé",
     "description": "",
     "price": "18dh",
-    "category": "Les boissons",
+    "category": "Boissons froides",
     "image": ""
   },
   {
-    "id": "lb9",
-    "name": "Cappuccino Italien",
+    "id": "bc2",
+    "name": "Jus Panaché",
     "description": "",
-    "price": "18dh",
-    "category": "Les boissons",
+    "price": "22dh",
+    "category": "Boissons froides",
     "image": ""
   },
   {
-    "id": "lb10",
-    "name": "Chocolat chaud",
-    "description": "",
-    "price": "18dh",
-    "category": "Les boissons",
-    "image": ""
-  },
-  {
-    "id": "lb11",
-    "name": "Cappuccino viennois",
+    "id": "bc3",
+    "name": "Jus d'Avocat Amande",
     "description": "",
     "price": "25dh",
-    "category": "Les boissons",
+    "category": "Boissons froides",
     "image": ""
   },
   {
-    "id": "lb12",
-    "name": "Café au miel",
-    "description": "",
-    "price": "18dh",
-    "category": "Les boissons",
-    "image": ""
-  },
-  {
-    "id": "ti1",
-    "name": "Thé à la menthe",
-    "description": "",
-    "price": "14dh",
-    "category": "Thé & infusions",
-    "image": ""
-  },
-  {
-    "id": "ti2",
-    "name": "Lipton",
-    "description": "",
-    "price": "14dh",
-    "category": "Thé & infusions",
-    "image": ""
-  },
-  {
-    "id": "ti3",
-    "name": "Verviene",
-    "description": "",
-    "price": "14dh",
-    "category": "Thé & infusions",
-    "image": ""
-  },
-  {
-    "id": "ti4",
-    "name": "Infusion thé bio",
-    "description": "",
-    "price": "16dh",
-    "category": "Thé & infusions",
-    "image": ""
-  },
-  {
-    "id": "shd1",
-    "name": "Mocaccino",
-    "description": "",
-    "price": "20dh",
-    "category": "Special hot drinks",
-    "image": ""
-  },
-  {
-    "id": "shd2",
-    "name": "Noisette Macchiato",
-    "description": "",
-    "price": "20dh",
-    "category": "Special hot drinks",
-    "image": ""
-  },
-  {
-    "id": "shd3",
-    "name": "Caramel Macchiato",
-    "description": "",
-    "price": "22dh",
-    "category": "Special hot drinks",
-    "image": ""
-  },
-  {
-    "id": "shd4",
-    "name": "Chocolat viennois",
-    "description": "",
-    "price": "22dh",
-    "category": "Special hot drinks",
-    "image": ""
-  },
-  {
-    "id": "shd5",
-    "name": "Chocolat Fondu",
+    "id": "bc4",
+    "name": "Milkshake Chocolat / Vanille / Fraise",
     "description": "",
     "price": "28dh",
-    "category": "Special hot drinks",
+    "category": "Boissons froides",
     "image": ""
   },
   {
-    "id": "shd6",
-    "name": "Chocolat Bresilien",
+    "id": "bc5",
+    "name": "Mojito Classique",
     "description": "",
     "price": "30dh",
-    "category": "Special hot drinks",
+    "category": "Boissons froides",
     "image": ""
   },
   {
-    "id": "il1",
-    "name": "Caramel & cream",
+    "id": "bc6",
+    "name": "Mojito Fraise",
+    "description": "",
+    "price": "33dh",
+    "category": "Boissons froides",
+    "image": ""
+  },
+  {
+    "id": "bc7",
+    "name": "Smoothie Exotique",
+    "description": "",
+    "price": "32dh",
+    "category": "Boissons froides",
+    "image": ""
+  },
+  {
+    "id": "bc8",
+    "name": "Ice Coffee",
     "description": "",
     "price": "25dh",
-    "category": "Iced latté",
-    "image": ""
-  },
-  {
-    "id": "il2",
-    "name": "Noisette",
-    "description": "",
-    "price": "25dh",
-    "category": "Iced latté",
-    "image": ""
-  },
-  {
-    "id": "il3",
-    "name": "Happy moka",
-    "description": "",
-    "price": "25dh",
-    "category": "Iced latté",
-    "image": ""
-  },
-  {
-    "id": "it1",
-    "name": "Pêche",
-    "description": "",
-    "price": "30dh",
-    "category": "Ice Tea",
-    "image": ""
-  },
-  {
-    "id": "it2",
-    "name": "Citron",
-    "description": "",
-    "price": "30dh",
-    "category": "Ice Tea",
-    "image": ""
-  },
-  {
-    "id": "it3",
-    "name": "Framboise",
-    "description": "",
-    "price": "30dh",
-    "category": "Ice Tea",
-    "image": ""
-  },
-  {
-    "id": "j1",
-    "name": "Orange",
-    "description": "",
-    "price": "25dh",
-    "category": "Jus",
-    "image": ""
-  },
-  {
-    "id": "j2",
-    "name": "Citron",
-    "description": "",
-    "price": "25dh",
-    "category": "Jus",
-    "image": ""
-  },
-  {
-    "id": "j3",
-    "name": "Carotte",
-    "description": "",
-    "price": "25dh",
-    "category": "Jus",
-    "image": ""
-  },
-  {
-    "id": "j4",
-    "name": "Pomme",
-    "description": "",
-    "price": "25dh",
-    "category": "Jus",
-    "image": ""
-  },
-  {
-    "id": "j5",
-    "name": "Banane",
-    "description": "",
-    "price": "25dh",
-    "category": "Jus",
-    "image": ""
-  },
-  {
-    "id": "j6",
-    "name": "Mangue",
-    "description": "",
-    "price": "25dh",
-    "category": "Jus",
-    "image": ""
-  },
-  {
-    "id": "j7",
-    "name": "Fraise",
-    "description": "",
-    "price": "25dh",
-    "category": "Jus",
-    "image": ""
-  },
-  {
-    "id": "j8",
-    "name": "Ananas",
-    "description": "",
-    "price": "25dh",
-    "category": "Jus",
-    "image": ""
-  },
-  {
-    "id": "j9",
-    "name": "Kiwi",
-    "description": "",
-    "price": "25dh",
-    "category": "Jus",
-    "image": ""
-  },
-  {
-    "id": "j10",
-    "name": "Panaché",
-    "description": "",
-    "price": "35dh",
-    "category": "Jus",
-    "image": ""
-  },
-  {
-    "id": "j11",
-    "name": "Avocat fruits secs",
-    "description": "",
-    "price": "30dh",
-    "category": "Jus",
-    "image": ""
-  },
-  {
-    "id": "j12",
-    "name": "Zaazaa",
-    "description": "",
-    "price": "48dh",
-    "category": "Jus",
-    "image": ""
-  },
-  {
-    "id": "fc1",
-    "name": "Caramel & Cream",
-    "description": "",
-    "price": "35dh",
-    "category": "Frappuccinos coffee",
-    "image": ""
-  },
-  {
-    "id": "fc2",
-    "name": "Caramel Beurre salé",
-    "description": "",
-    "price": "35dh",
-    "category": "Frappuccinos coffee",
-    "image": ""
-  },
-  {
-    "id": "fc3",
-    "name": "Moka Chocolate",
-    "description": "",
-    "price": "35dh",
-    "category": "Frappuccinos coffee",
-    "image": ""
-  },
-  {
-    "id": "fc4",
-    "name": "Noisette",
-    "description": "",
-    "price": "35dh",
-    "category": "Frappuccinos coffee",
-    "image": ""
-  },
-  {
-    "id": "fc5",
-    "name": "Amaretto",
-    "description": "",
-    "price": "35dh",
-    "category": "Frappuccinos coffee",
-    "image": ""
-  },
-  {
-    "id": "ms1",
-    "name": "Carmel Shake",
-    "description": "",
-    "price": "40dh",
-    "category": "Milkshakes",
-    "image": ""
-  },
-  {
-    "id": "ms2",
-    "name": "Orange shake",
-    "description": "",
-    "price": "40dh",
-    "category": "Milkshakes",
-    "image": ""
-  },
-  {
-    "id": "ms3",
-    "name": "Mixed berries(fruits rouges)",
-    "description": "",
-    "price": "40dh",
-    "category": "Milkshakes",
-    "image": ""
-  },
-  {
-    "id": "ms4",
-    "name": "Mango Alphonso",
-    "description": "",
-    "price": "40dh",
-    "category": "Milkshakes",
-    "image": ""
-  },
-  {
-    "id": "ms5",
-    "name": "Chocolat Oreo",
-    "description": "",
-    "price": "40dh",
-    "category": "Milkshakes",
-    "image": ""
-  },
-  {
-    "id": "ms6",
-    "name": "Fruit dela passion",
-    "description": "",
-    "price": "40dh",
-    "category": "Milkshakes",
-    "image": ""
-  },
-  {
-    "id": "ms7",
-    "name": "Fraise",
-    "description": "",
-    "price": "40dh",
-    "category": "Milkshakes",
-    "image": ""
-  },
-  {
-    "id": "sm1",
-    "name": "Detox Maison",
-    "description": "Betterave, pomme, gingembre, feuilles de menthe et orange",
-    "price": "35dh",
-    "category": "Smoothies",
-    "image": ""
-  },
-  {
-    "id": "sm2",
-    "name": "Berry Explosion",
-    "description": "Blue berry, Fraise, Yaourt et menthe",
-    "price": "35dh",
-    "category": "Smoothies",
-    "image": ""
-  },
-  {
-    "id": "sm3",
-    "name": "Mango Madness",
-    "description": "Mangue, Banane, yaourt et passion",
-    "price": "35dh",
-    "category": "Smoothies",
-    "image": ""
-  },
-  {
-    "id": "sm4",
-    "name": "Tropical paradise",
-    "description": "Ananas, pêche, passion et yaourt",
-    "price": "35dh",
-    "category": "Smoothies",
-    "image": ""
-  },
-  {
-    "id": "mo1",
-    "name": "Classique",
-    "description": "",
-    "price": "25dh",
-    "category": "Mojitos",
-    "image": ""
-  },
-  {
-    "id": "mo2",
-    "name": "Mango mojito",
-    "description": "",
-    "price": "25dh",
-    "category": "Mojitos",
-    "image": ""
-  },
-  {
-    "id": "mo3",
-    "name": "Berries mojito",
-    "description": "",
-    "price": "25dh",
-    "category": "Mojitos",
-    "image": ""
-  },
-  {
-    "id": "mo4",
-    "name": "Passion mojito",
-    "description": "",
-    "price": "25dh",
-    "category": "Mojitos",
-    "image": ""
-  },
-  {
-    "id": "mo5",
-    "name": "Ananas mojito",
-    "description": "",
-    "price": "25dh",
-    "category": "Mojitos",
-    "image": ""
-  },
-  {
-    "id": "mo6",
-    "name": "Blue mojito",
-    "description": "",
-    "price": "25dh",
-    "category": "Mojitos",
-    "image": ""
-  },
-  {
-    "id": "mo7",
-    "name": "Concomre mojito",
-    "description": "",
-    "price": "25dh",
-    "category": "Mojitos",
-    "image": ""
-  },
-  {
-    "id": "mo8",
-    "name": "Starwberry mojito",
-    "description": "",
-    "price": "25dh",
-    "category": "Mojitos",
-    "image": ""
-  },
-  {
-    "id": "csa1",
-    "name": "Fromage",
-    "description": "Mozzarella et fromage rouge",
-    "price": "42dh",
-    "category": "Crêpe salées",
-    "image": ""
-  },
-  {
-    "id": "csa2",
-    "name": "Dinde fumée",
-    "description": "Sauce blanche, dinde fumée, fromage",
-    "price": "48dh",
-    "category": "Crêpe salées",
-    "image": ""
-  },
-  {
-    "id": "csa3",
-    "name": "Poulet Champignon",
-    "description": "Sauce champignon, poulet, fromage",
-    "price": "54dh",
-    "category": "Crêpe salées",
-    "image": ""
-  },
-  {
-    "id": "csu1",
-    "name": "Nature",
-    "description": "",
-    "price": "20dh",
-    "category": "Crêpe sucrées",
-    "image": ""
-  },
-  {
-    "id": "csu2",
-    "name": "Confiture",
-    "description": "",
-    "price": "25dh",
-    "category": "Crêpe sucrées",
-    "image": ""
-  },
-  {
-    "id": "csu3",
-    "name": "Nutella",
-    "description": "",
-    "price": "30dh",
-    "category": "Crêpe sucrées",
-    "image": ""
-  },
-  {
-    "id": "csu4",
-    "name": "Nutella et Banane",
-    "description": "",
-    "price": "37dh",
-    "category": "Crêpe sucrées",
-    "image": ""
-  },
-  {
-    "id": "csu5",
-    "name": "Miel & Noix",
-    "description": "",
-    "price": "35dh",
-    "category": "Crêpe sucrées",
-    "image": ""
-  },
-  {
-    "id": "csu6",
-    "name": "Royal",
-    "description": "Caramel & fruits secs & créme chantilly",
-    "price": "40dh",
-    "category": "Crêpe sucrées",
-    "image": ""
-  },
-  {
-    "id": "csu7",
-    "name": "Exotique",
-    "description": "",
-    "price": "48dh",
-    "category": "Crêpe sucrées",
-    "image": ""
-  },
-  {
-    "id": "csu8",
-    "name": "Brésilienne",
-    "description": "",
-    "price": "48dh",
-    "category": "Crêpe sucrées",
-    "image": ""
-  },
-  {
-    "id": "csu9",
-    "name": "Brésilienne Nutella Banane",
-    "description": "Boule de glace vanille",
-    "price": "48dh",
-    "category": "Crêpe sucrées",
-    "image": ""
-  },
-  {
-    "id": "csu10",
-    "name": "Cappuccino7 Nutella",
-    "description": "Boule de glace au choix, Oréo, Kitkat, Noix",
-    "price": "52dh",
-    "category": "Crêpe sucrées",
-    "image": ""
-  },
-  {
-    "id": "csu11",
-    "name": "Miel et fruit sec",
-    "description": "",
-    "price": "49dh",
-    "category": "Crêpe sucrées",
-    "image": ""
-  },
-  {
-    "id": "pan1",
-    "name": "Caramel",
-    "description": "",
-    "price": "30dh",
-    "category": "Pancakes",
-    "image": ""
-  },
-  {
-    "id": "pan2",
-    "name": "Miel & Noix",
-    "description": "",
-    "price": "30dh",
-    "category": "Pancakes",
-    "image": ""
-  },
-  {
-    "id": "pan3",
-    "name": "Nutella",
-    "description": "",
-    "price": "35dh",
-    "category": "Pancakes",
-    "image": ""
-  },
-  {
-    "id": "pan4",
-    "name": "Miel aux fruits secs",
-    "description": "",
-    "price": "49dh",
-    "category": "Pancakes",
-    "image": ""
-  },
-  {
-    "id": "ga1",
-    "name": "Caramel",
-    "description": "",
-    "price": "30dh",
-    "category": "Gaufres",
-    "image": ""
-  },
-  {
-    "id": "ga2",
-    "name": "Miel & Noix",
-    "description": "",
-    "price": "30dh",
-    "category": "Gaufres",
-    "image": ""
-  },
-  {
-    "id": "ga3",
-    "name": "Nutella",
-    "description": "",
-    "price": "35dh",
-    "category": "Gaufres",
-    "image": ""
-  },
-  {
-    "id": "ga4",
-    "name": "Miel aux fruits secs",
-    "description": "",
-    "price": "49dh",
-    "category": "Gaufres",
-    "image": ""
-  },
-  {
-    "id": "at1",
-    "name": "Formule Patisserie",
-    "description": "Patisserie avec une Boisson chaude au choix",
-    "price": "35dh",
-    "category": "Afternoon Tea",
-    "image": ""
-  },
-  {
-    "id": "at2",
-    "name": "Formule Beldi",
-    "description": "Beghri avec Amlou et une Boisson chaude au choix",
-    "price": "35dh",
-    "category": "Afternoon Tea",
-    "image": ""
-  },
-  {
-    "id": "at3",
-    "name": "Formule Crêpe sucrée",
-    "description": "Crêpe Nutella avec une Boisson chaude au choix",
-    "price": "40dh",
-    "category": "Afternoon Tea",
-    "image": ""
-  },
-  {
-    "id": "at4",
-    "name": "Formule Crêpe Salée",
-    "description": "Cêpe Dinde fumée avec une Boisson chaude au choix",
-    "price": "48dh",
-    "category": "Afternoon Tea",
-    "image": ""
-  },
-  {
-    "id": "at5",
-    "name": "Formule Gourmet",
-    "description": "Cêpe Poulet Champignon avec une Boisson chaude au choix",
-    "price": "55dh",
-    "category": "Afternoon Tea",
-    "image": ""
-  },
-  {
-    "id": "ft1",
-    "name": "Formule Ghriyba",
-    "description": "Ghriyba avec 2 Fequasse avec une Boisson chaude au choix",
-    "price": "25dh",
-    "category": "Formule Tea",
-    "image": ""
-  },
-  {
-    "id": "ft2",
-    "name": "Formule Cacke",
-    "description": "Cacke fait maison avec une Boisson chaude au choix",
-    "price": "25dh",
-    "category": "Formule Tea",
-    "image": ""
-  },
-  {
-    "id": "ic1",
-    "name": "Une Boule",
-    "description": "",
-    "price": "18 dh",
-    "category": "Ice-cream",
-    "image": ""
-  },
-  {
-    "id": "ic2",
-    "name": "Deux Boule",
-    "description": "",
-    "price": "32 dh",
-    "category": "Ice-cream",
-    "image": ""
-  },
-  {
-    "id": "ic3",
-    "name": "Trois Boule",
-    "description": "",
-    "price": "45 dh",
-    "category": "Ice-cream",
-    "image": ""
-  },
-  {
-    "id": "ic4",
-    "name": "Coupe Banana Split",
-    "description": "4 boules au choix, Biscuit, Oreo, Topping au choix",
-    "price": "55 dh",
-    "category": "Ice-cream",
-    "image": ""
-  },
-  {
-    "id": "ic5",
-    "name": "Coupe Cappuccino7",
-    "description": "4 boules au choix, Biscuit, Oreo, Topping au choix",
-    "price": "65 dh",
-    "category": "Ice-cream",
-    "image": ""
-  },
-  {
-    "id": "pt1",
-    "name": "Patisserie",
-    "description": "Voir notre plateau",
-    "price": "à partir de 25dh",
-    "category": "Patisserie",
+    "category": "Boissons froides",
     "image": ""
   },
   {
     "id": "sa1",
-    "name": "Salade Marocaine",
-    "description": "Concombre, Tomates, Laitue, Oignon",
-    "price": "35dh",
+    "name": "Salade Verte",
+    "description": "Laitue, Concombre, Tomates, Oignon",
+    "price": "30dh",
     "category": "Salades",
     "image": ""
   },
   {
     "id": "sa2",
-    "name": "Salade Thon",
-    "description": "Assortiment de salade, Thon, Maïs, Tomates, Oignon",
+    "name": "Salade Marocaine",
+    "description": "Tomates, Oignon",
     "price": "40dh",
     "category": "Salades",
     "image": ""
@@ -1322,8 +618,7 @@ export const REVIEWS: Review[] = [
   },
   {
     id: 'r13',
-    author: 'RXF BEN',
-    rating: 5,
+    author: 'RXF BEN',    rating: 5,
     comment: 'Amazing and fast service top ❤️🔥',
     date: '2 months ago',
   },

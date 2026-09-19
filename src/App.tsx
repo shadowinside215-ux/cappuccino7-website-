@@ -60,10 +60,10 @@ export default function App() {
           <Hero />
           <About />
           <MenuSection />
-          <LoyaltySection />
           <Services />
           <Gallery />
           <Reviews />
+          <LoyaltySection />
           <LocationAndContact />
         </main>
         <Footer />

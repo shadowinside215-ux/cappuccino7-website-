@@ -11,14 +11,38 @@ export default function MenuSection() {
   const { data: settings } = useDocument<any>('settings', 'global');
   const { t, isRTL } = useTranslation();
 
-  const itemsToShow = [...dbItems];
-  MENU_ITEMS.forEach(localItem => {
-    if (!itemsToShow.find(i => i.id === localItem.id)) {
-      itemsToShow.push(localItem);
+  // Deduplicate items by both ID and normalized name to prevent duplicate keys
+  const normalize = (str: string) =>
+    (str || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/omelette/g, 'omlette')
+      .replace(/[^a-z0-9]/g, '');
+
+  const allItems = [...dbItems, ...MENU_ITEMS];
+  const uniqueItems: MenuItem[] = [];
+  const seenIds = new Set<string>();
+  const seenNames = new Set<string>();
+
+  allItems.forEach((item) => {
+    if (!item) return;
+    const rawId = item.id ? String(item.id).trim() : '';
+    const normName = normalize(item.name);
+
+    if (rawId && seenIds.has(rawId)) {
+      return;
     }
+    if (normName && seenNames.has(normName)) {
+      return;
+    }
+
+    if (rawId) seenIds.add(rawId);
+    if (normName) seenNames.add(normName);
+    uniqueItems.push(item);
   });
 
-  const categories: string[] = Array.from(new Set(itemsToShow.map(item => item.category)));
+  const categories: string[] = Array.from(new Set(uniqueItems.map(item => item.category)));
   const [activeCategory, setActiveCategory] = useState('');
 
   // Set initial category when data loads
@@ -32,11 +56,61 @@ export default function MenuSection() {
     }
   }, [categories, activeCategory]);
 
-  const filteredItems = itemsToShow.filter((item) => item.category === activeCategory);
+  let filteredItems = uniqueItems.filter((item) => item.category === activeCategory);
+
+  // Apply strict ordering for Breakfast category
+  if (activeCategory === 'Breakfast') {
+    const topIds = ['b5', 'b7', 'b9', 'b1', 'b2', 'b4', 'b8'];
+    const topNames = [
+      'ftour chamali',
+      'cappuccino7 breakfast',
+      'turkie',
+      'occidental',
+      'amazigh',
+      'ftour fassi',
+      'healthy breakfast'
+    ];
+
+    const bottomIds = ['b3', 'b6', 'b10'];
+    const bottomNames = [
+      'gourmand',
+      'omlette',
+      'anglais'
+    ];
+
+    filteredItems.sort((a, b) => {
+      const aId = (a.id || '').trim();
+      const bId = (b.id || '').trim();
+      const aNorm = normalize(a.name);
+      const bNorm = normalize(b.name);
+
+      const aTopIdx = topIds.indexOf(aId) !== -1 ? topIds.indexOf(aId) : topNames.findIndex(n => aNorm.includes(n));
+      const bTopIdx = topIds.indexOf(bId) !== -1 ? topIds.indexOf(bId) : topNames.findIndex(n => bNorm.includes(n));
+
+      // Both are in top list
+      if (aTopIdx !== -1 && bTopIdx !== -1) return aTopIdx - bTopIdx;
+      // Only A is in top list
+      if (aTopIdx !== -1) return -1;
+      // Only B is in top list
+      if (bTopIdx !== -1) return 1;
+
+      const aBottomIdx = bottomIds.indexOf(aId) !== -1 ? bottomIds.indexOf(aId) : bottomNames.findIndex(n => aNorm.includes(n));
+      const bBottomIdx = bottomIds.indexOf(bId) !== -1 ? bottomIds.indexOf(bId) : bottomNames.findIndex(n => bNorm.includes(n));
+
+      // Both are in bottom list
+      if (aBottomIdx !== -1 && bBottomIdx !== -1) return aBottomIdx - bBottomIdx;
+      // Only A is in bottom list
+      if (aBottomIdx !== -1) return 1;
+      // Only B is in bottom list
+      if (bBottomIdx !== -1) return -1;
+
+      return 0;
+    });
+  }
 
   const loyaltyImg = settings?.loyaltyImage || "/input_file_1.png";
 
-  if (loading && itemsToShow.length === 0) return null;
+  if (loading && uniqueItems.length === 0) return null;
 
   return (
     <section id="menu" className="py-24 px-4 bg-warm-bg overflow-hidden min-h-[800px]">
@@ -88,11 +162,21 @@ export default function MenuSection() {
           >
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredItems.map((item: MenuItem) => (
-                <div key={item.id}>
-                  <MenuCard item={item} />
-                </div>
-              ))}
+              {(() => {
+                const usedKeys = new Set<string>();
+                return filteredItems.map((item: MenuItem, index: number) => {
+                  let uniqueKey = item.id ? String(item.id).trim() : `item-${index}`;
+                  if (usedKeys.has(uniqueKey)) {
+                    uniqueKey = `${uniqueKey}-${index}`;
+                  }
+                  usedKeys.add(uniqueKey);
+                  return (
+                    <div key={uniqueKey}>
+                      <MenuCard item={item} />
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </motion.div>
         </AnimatePresence>
