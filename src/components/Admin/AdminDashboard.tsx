@@ -590,6 +590,8 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset, settings }: any)
                     <option>Milkshakes</option>
                     <option>Smoothies</option>
                     <option>Mojitos</option>
+                    <option>Afternoon Tea</option>
+                    <option>Formule Tea</option>
                   </select>
                 </div>
                 <div>

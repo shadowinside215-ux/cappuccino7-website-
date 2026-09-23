@@ -23,23 +23,32 @@ export default function MenuSection() {
   const allItems = [...dbItems, ...MENU_ITEMS];
   const uniqueItems: MenuItem[] = [];
   const seenIds = new Set<string>();
-  const seenNames = new Set<string>();
+  const seenKeys = new Set<string>();
 
   allItems.forEach((item) => {
     if (!item) return;
     const rawId = item.id ? String(item.id).trim() : '';
+    let cat = item.category || 'Breakfast';
+    if (cat.toLowerCase() === 'juices') {
+      cat = 'Jus';
+    }
     const normName = normalize(item.name);
+    const uniqueKey = `${cat.toLowerCase()}:${normName}`;
 
     if (rawId && seenIds.has(rawId)) {
       return;
     }
-    if (normName && seenNames.has(normName)) {
+    if (seenKeys.has(uniqueKey)) {
       return;
     }
 
     if (rawId) seenIds.add(rawId);
-    if (normName) seenNames.add(normName);
-    uniqueItems.push(item);
+    seenKeys.add(uniqueKey);
+
+    uniqueItems.push({
+      ...item,
+      category: cat
+    });
   });
 
   const categories: string[] = Array.from(new Set(uniqueItems.map(item => item.category)));
@@ -136,7 +145,7 @@ export default function MenuSection() {
                     : 'bg-white text-gray-400 hover:text-coffee-brown'
                 }`}
               >
-                {cat}
+                {t(cat) || cat}
               </button>
             ))}
           </div>
