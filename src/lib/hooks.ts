@@ -55,11 +55,16 @@ export function useCollection<T = DocumentData>(path: string, orderField?: strin
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+
     const q = orderField 
       ? query(collection(db, path), orderBy(orderField))
       : query(collection(db, path));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      clearTimeout(timer);
       const items = snapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id
@@ -67,12 +72,16 @@ export function useCollection<T = DocumentData>(path: string, orderField?: strin
       setData(items);
       setLoading(false);
     }, (err) => {
-      handleFirestoreError(err, OperationType.LIST, path);
+      clearTimeout(timer);
+      console.warn('Collection load warning:', err);
       setError(err as Error);
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      clearTimeout(timer);
+      unsubscribe();
+    };
   }, [path, orderField]);
 
   return { data, loading, error };
@@ -83,17 +92,26 @@ export function useDocument<T = DocumentData>(path: string, id: string) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+
     const unsubscribe = onSnapshot(doc(db, path, id), (snapshot) => {
+      clearTimeout(timer);
       if (snapshot.exists()) {
         setData({ id: snapshot.id, ...snapshot.data() } as T);
       }
       setLoading(false);
     }, (err) => {
-      handleFirestoreError(err, OperationType.GET, `${path}/${id}`);
+      clearTimeout(timer);
+      console.warn('Document load warning:', err);
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      clearTimeout(timer);
+      unsubscribe();
+    };
   }, [path, id]);
 
   return { data, loading };
