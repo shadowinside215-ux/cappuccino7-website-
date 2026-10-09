@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Phone, Globe } from 'lucide-react';
+import { Menu, X, Phone, Globe, Coffee } from 'lucide-react';
 import { useTranslation, Language } from '../lib/i18n';
 import { useDocument } from '../lib/hooks';
 
@@ -61,8 +61,9 @@ export default function Navbar() {
       <div className="w-full px-2 md:px-6 flex items-center justify-between">
         <div className="flex items-center">
           <a href="#" className="flex items-center space-x-3 group">
-            <img src={logoUrl} alt="Cappuccino 7 Logo" className="h-16 w-auto md:h-24 md:-ml-2 md:-mt-4 transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
-            <span className="font-serif text-xl md:text-2xl font-bold tracking-tight text-coffee-brown">
+            <img src={logoUrl} alt="Cappuccino 7 Logo" loading="eager" fetchPriority="high" className="h-16 w-auto md:h-24 md:-ml-2 md:-mt-4 transition-transform group-hover:scale-105" referrerPolicy="no-referrer" />
+            <span className="font-serif text-xl md:text-2xl font-bold tracking-tight text-coffee-brown flex items-center gap-2">
+              <Coffee size={24} className="text-coffee-brown" />
               Cappuccino 7
             </span>
           </a>

@@ -1,6 +1,6 @@
 import AnimatedHeading from './AnimatedHeading';
 import { motion } from 'motion/react';
-import { MapPin, Navigation, Phone, Clock, Instagram, Facebook } from 'lucide-react';
+import { MapPin, Navigation, Phone, Clock, Instagram, Facebook, Globe } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
 
 export default function LocationAndContact() {
@@ -66,6 +66,9 @@ export default function LocationAndContact() {
               </a>
               <a href="https://web.facebook.com/people/Cappuccino7Mahajsala/100069623504882/?locale=fr_FR&_rdc=1&_rdr#" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-espresso-dark hover:bg-coffee-brown hover:text-white transition-all shadow-sm">
                 <Facebook size={20} />
+              </a>
+              <a href="https://www.cappuccino7.ma/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-espresso-dark hover:bg-coffee-brown hover:text-white transition-all shadow-sm" title="Official Website">
+                <Globe size={20} />
               </a>
             </div>
 

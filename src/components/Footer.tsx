@@ -56,6 +56,7 @@ export default function Footer() {
               <li><a href="#menu" onClick={(e) => handleNavClick(e, '#menu')} className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.menu')}</a></li>
               <li><a href="#gallery" onClick={(e) => handleNavClick(e, '#gallery')} className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.gallery')}</a></li>
               <li><a href="#location" onClick={(e) => handleNavClick(e, '#location')} className="text-espresso-dark hover:text-coffee-brown transition-colors">{t('nav.contact')}</a></li>
+              <li><a href="https://www.cappuccino7.ma/" target="_blank" rel="noopener noreferrer" className="text-espresso-dark hover:text-coffee-brown transition-colors flex items-center space-x-1"><span>Official Website</span></a></li>
             </ul>
           </div>
         </div>
