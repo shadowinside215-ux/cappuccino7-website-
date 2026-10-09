@@ -18,10 +18,11 @@ import Footer from './components/Footer';
 
 import { I18nProvider } from './lib/i18n';
 import { useDocument } from './lib/hooks';
+import { Coffee } from 'lucide-react';
 
 export default function App() {
   
-  const { data: settings } = useDocument<any>('settings', 'global');
+  const { data: settings, loading } = useDocument<any>('settings', 'global');
   const [showAdmin, setShowAdmin] = useState(false);
 
   // Make toggle globally available
@@ -46,9 +47,14 @@ export default function App() {
   return (
     <I18nProvider>
       <div className="min-h-screen selection:bg-coffee-brown selection:text-white">
+        {loading ? (
+          <div className="h-screen w-full bg-espresso-dark flex flex-col items-center justify-center fixed inset-0 z-[9999]">
+            <Coffee className="w-16 h-16 text-coffee-brown animate-spin" />
+          </div>
+        ) : null}
         
         
-        <Navbar />
+                <Navbar />
         <main className="relative">
           <AmbientGlow />
           <Hero />
