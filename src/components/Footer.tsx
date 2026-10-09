@@ -29,7 +29,7 @@ export default function Footer() {
         <div className={`grid grid-cols-1 md:grid-cols-4 gap-12 mb-20 ${isRTL ? 'md:grid-cols-4' : ''}`}>
           <div className="col-span-1 md:col-span-2">
             <a href="#" className="mb-8 flex items-center space-x-4">
-              <img src={logoUrl} alt="Cappuccino 7 Logo" className="h-16 w-auto" referrerPolicy="no-referrer" />
+              <img src={logoUrl} alt="Cappuccino 7 Logo" loading="eager" className="h-16 w-auto" referrerPolicy="no-referrer" />
               <span className="font-serif text-3xl font-bold tracking-tight text-coffee-brown">
                 Cappuccino 7
               </span>
