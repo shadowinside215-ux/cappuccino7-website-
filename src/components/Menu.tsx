@@ -225,10 +225,10 @@ function MenuCard({ item }: MenuCardProps) {
   
   return (
     <div className="bg-white p-6 rounded-[32px] shadow-sm hover:shadow-xl transition-all border border-beige-light group flex flex-col h-full">
-      {item.image ? (
+      {item.image && item.image.trim() ? (
         <div className="w-full rounded-[32px] overflow-hidden mb-6 relative bg-transparent flex items-center justify-center">
           <img 
-            src={item.image} 
+            src={item.image.trim()} 
             alt={t(item.name) || item.name}
             className="w-full h-auto block group-hover:scale-110 transition-transform duration-500"
             referrerPolicy="no-referrer"

@@ -32,14 +32,14 @@ export default function App() {
 
   // Update favicon if logoUrl changes
   useEffect(() => {
-    if (settings?.logoUrl) {
+    if (typeof settings?.logoUrl === 'string' && settings.logoUrl.trim().length > 0) {
       const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
       if (link) {
-        link.href = settings.logoUrl;
+        link.href = settings.logoUrl.trim();
       }
       const appleLink = document.querySelector("link[rel~='apple-touch-icon']") as HTMLLinkElement;
       if (appleLink) {
-        appleLink.href = settings.logoUrl;
+        appleLink.href = settings.logoUrl.trim();
       }
     }
   }, [settings?.logoUrl]);

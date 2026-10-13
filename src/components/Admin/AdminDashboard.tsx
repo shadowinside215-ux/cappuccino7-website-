@@ -200,7 +200,7 @@ function LoyaltyManager({ settings, cloudName, uploadPreset }: any) {
       <div className="flex flex-col md:flex-row gap-8 items-center">
         <div className="w-48 h-48 bg-warm-bg rounded-[32px] overflow-hidden relative group border border-beige-light flex items-center justify-center p-4">
           <img 
-            src={settings?.loyaltyImage || '/input_file_1.png'} 
+            src={(typeof settings?.loyaltyImage === 'string' && settings.loyaltyImage.trim()) || '/input_file_1.png'} 
             className="max-w-full max-h-full object-contain" 
             referrerPolicy="no-referrer"
           />
@@ -251,7 +251,7 @@ function LogoManager({ settings, cloudName, uploadPreset }: any) {
       <div className="flex flex-col md:flex-row gap-8 items-center">
         <div className="w-48 h-48 bg-warm-bg rounded-[32px] overflow-hidden relative group border border-beige-light flex items-center justify-center p-4">
           <img 
-            src={settings?.logoUrl || '/input_file_1.png'} 
+            src={(typeof settings?.logoUrl === 'string' && settings.logoUrl.trim()) || '/input_file_1.png'} 
             className="max-w-full max-h-full object-contain" 
             referrerPolicy="no-referrer"
           />
@@ -490,8 +490,8 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset, settings }: any)
         {filteredItems.map((item: any, idx: number) => (
           <div key={item.id ? `${item.id}-${idx}` : idx} className="bg-white p-6 rounded-[32px] shadow-sm relative group">
             <div className="aspect-square rounded-2xl overflow-hidden mb-4 bg-warm-bg font-light text-espresso-dark flex items-center justify-center">
-              {item.image ? (
-                <img src={item.image} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+              {item.image && item.image.trim() ? (
+                <img src={item.image.trim()} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               ) : (
                 <Coffee size={48} className="text-coffee-brown/40" />
               )}
@@ -535,9 +535,9 @@ function MenuManager({ items: dbItems, cloudName, uploadPreset, settings }: any)
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-coffee-brown mb-2" />
                       <span className="text-[10px] font-bold uppercase text-gray-400">Uploading...</span>
                     </div>
-                  ) : editingItem.image ? (
+                  ) : editingItem.image && editingItem.image.trim() ? (
                     <>
-                      <img src={editingItem.image} className="w-full h-full object-cover" />
+                      <img src={editingItem.image.trim()} className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
                          <Upload className="text-white" />
                       </div>
@@ -649,7 +649,7 @@ function AboutManager({ settings, cloudName, uploadPreset }: any) {
       <div className="flex flex-col md:flex-row gap-8 items-center">
         <div className="w-48 h-64 bg-warm-bg rounded-[32px] overflow-hidden relative group border border-beige-light flex items-center justify-center p-4">
           <img 
-             src={settings?.atmosphereImage || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800'} 
+             src={(typeof settings?.atmosphereImage === 'string' && settings.atmosphereImage.trim()) || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800'} 
              className="w-full h-full object-cover rounded-[16px]" 
              referrerPolicy="no-referrer"
           />
@@ -712,10 +712,10 @@ function HeroManager({ settings, cloudName, uploadPreset }: any) {
         <div className="space-y-4">
           <label className="text-xs font-bold uppercase text-gray-400">Hero Main Media (Image or Video)</label>
           <div className="aspect-video bg-warm-bg rounded-[32px] overflow-hidden relative group">
-            {settings?.heroVideo ? (
-              <video src={settings.heroVideo} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+            {settings?.heroVideo && settings.heroVideo.trim() ? (
+              <video src={settings.heroVideo.trim()} autoPlay loop muted playsInline className="w-full h-full object-cover" />
             ) : (
-              <img src={settings?.heroImage || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1920'} className="w-full h-full object-cover" />
+              <img src={(typeof settings?.heroImage === 'string' && settings.heroImage.trim()) || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1920'} className="w-full h-full object-cover" />
             )}
             {isUploading && (
               <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white z-20">
@@ -812,9 +812,9 @@ function GalleryManager({ settings, cloudName, uploadPreset }: any) {
       </div>
       
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {settings?.galleryImages?.map((url: string, i: number) => (
+        {settings?.galleryImages?.filter((u: any) => typeof u === 'string' && u.trim().length > 0).map((url: string, i: number) => (
           <div key={i} className="aspect-square bg-white rounded-2xl overflow-hidden relative group">
-            <img src={url} className="w-full h-full object-cover" />
+            <img src={url.trim()} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"> 
               <button onClick={() => removePhoto(url)} className="p-3 bg-white rounded-full text-red-500 shadow-xl hover:scale-110"><Trash2 size={20} /></button>
             </div>

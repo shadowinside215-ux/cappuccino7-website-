@@ -27,11 +27,18 @@ export default function Hero() {
 
   const title = settings?.heroTitle || t('hero.title');
   const subtitle = settings?.heroSubtitle || t('hero.subtitle');
-  const image = settings?.heroImage || localStorage.getItem('heroImage') || '';
-  let video = settings?.heroVideo || localStorage.getItem('heroVideo');
-  if (video && video.includes('cloudinary.com') && video.includes('/upload/') && !video.includes('f_auto')) {
-    video = video.replace('/upload/', '/upload/f_auto,q_auto/');
+  const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1920';
+  const image = (typeof settings?.heroImage === 'string' && settings.heroImage.trim()) || 
+                (typeof localStorage.getItem('heroImage') === 'string' && localStorage.getItem('heroImage')?.trim()) || 
+                DEFAULT_HERO_IMAGE;
+
+  let rawVideo = (typeof settings?.heroVideo === 'string' && settings.heroVideo.trim()) || 
+                 (typeof localStorage.getItem('heroVideo') === 'string' && localStorage.getItem('heroVideo')?.trim()) || 
+                 '';
+  if (rawVideo && rawVideo.includes('cloudinary.com') && rawVideo.includes('/upload/') && !rawVideo.includes('f_auto')) {
+    rawVideo = rawVideo.replace('/upload/', '/upload/f_auto,q_auto/');
   }
+  const video = rawVideo && rawVideo.length > 0 ? rawVideo : null;
 
   const objPos = isMobile ? `${settings?.mobileVideoPositionX ?? 15}% center` : 'center top';
   const objectFit = (isMobile && settings?.mobileVideoFit === 'contain') ? 'contain' : 'cover';
@@ -46,7 +53,7 @@ export default function Hero() {
           <video
             style={{ objectPosition: objPos }}
             src={video}
-            poster={image}
+            poster={image || undefined}
             preload="auto"
             autoPlay
             loop

@@ -8,7 +8,7 @@ export default function LoyaltySection() {
   const { t, isRTL } = useTranslation();
   const { data: settings } = useDocument<any>('settings', 'global');
   
-  const loyaltyImg = settings?.loyaltyImage || "/input_file_1.png";
+  const loyaltyImg = (typeof settings?.loyaltyImage === 'string' && settings.loyaltyImage.trim()) || "/input_file_1.png";
 
   return (
     <section className="py-24 px-4 bg-espresso-dark overflow-hidden relative">

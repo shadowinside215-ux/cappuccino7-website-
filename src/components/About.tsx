@@ -40,7 +40,7 @@ export default function About() {
 
   const quote = settings?.atmosphereQuote || t('gallery.title');
   const author = settings?.atmosphereAuthor || "— Regular Guest";
-  const atmosphereImage = settings?.atmosphereImage || "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800";
+  const atmosphereImage = (typeof settings?.atmosphereImage === 'string' && settings.atmosphereImage.trim()) || "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800";
 
   return (
     <section id="about" className="py-24 px-4 bg-white relative overflow-hidden">

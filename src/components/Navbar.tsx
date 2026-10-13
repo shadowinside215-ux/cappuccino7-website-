@@ -49,7 +49,7 @@ export default function Navbar() {
     { code: 'ar', label: 'AR' },
   ];
 
-  const logoUrl = settings?.logoUrl || "/input_file_1.png";
+  const logoUrl = (typeof settings?.logoUrl === 'string' && settings.logoUrl.trim()) || "/input_file_1.png";
 
   return (
     <nav

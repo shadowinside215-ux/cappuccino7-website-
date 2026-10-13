@@ -7,7 +7,7 @@ export default function Footer() {
   const { t, isRTL } = useTranslation();
   const { data: settings } = useDocument<any>('settings', 'global');
 
-  const logoUrl = settings?.logoUrl || "/input_file_1.png";
+  const logoUrl = (typeof settings?.logoUrl === 'string' && settings.logoUrl.trim()) || "/input_file_1.png";
 
   const handleNavClick = (e: any, href: string) => {
     e.preventDefault();

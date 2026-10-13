@@ -14,9 +14,11 @@ export default function Gallery() {
     </div>;
   }
 
-  const images = settings?.galleryImages?.length > 0 
-    ? settings.galleryImages.map((url: string, i: number) => ({ id: i.toString(), url, alt: `Gallery ${i}` }))
-    : GALLERY_IMAGES;
+  const images = (Array.isArray(settings?.galleryImages) && settings.galleryImages.length > 0)
+    ? settings.galleryImages
+        .filter((url: any) => typeof url === 'string' && url.trim().length > 0)
+        .map((url: string, i: number) => ({ id: i.toString(), url: url.trim(), alt: `Gallery ${i}` }))
+    : GALLERY_IMAGES.filter((img: any) => typeof img?.url === 'string' && img.url.trim().length > 0);
 
   return (
     <section id="gallery" className="py-24 px-4 bg-white overflow-hidden">
