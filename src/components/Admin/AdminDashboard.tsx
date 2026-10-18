@@ -714,8 +714,13 @@ function HeroManager({ settings, cloudName, uploadPreset }: any) {
           <div className="aspect-video bg-warm-bg rounded-[32px] overflow-hidden relative group">
             {settings?.heroVideo && settings.heroVideo.trim() ? (
               <video src={settings.heroVideo.trim()} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+            ) : settings?.heroImage && typeof settings.heroImage === 'string' && settings.heroImage.trim() && !settings.heroImage.includes('1554118811-1e0d58224f24') ? (
+              <img src={settings.heroImage.trim()} className="w-full h-full object-cover" />
             ) : (
-              <img src={(typeof settings?.heroImage === 'string' && settings.heroImage.trim()) || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1920'} className="w-full h-full object-cover" />
+              <div className="w-full h-full flex flex-col items-center justify-center bg-espresso-dark/10 text-gray-400">
+                <Upload size={32} className="mb-2 text-coffee-brown" />
+                <span className="text-xs font-bold uppercase tracking-wider">No Hero Media</span>
+              </div>
             )}
             {isUploading && (
               <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white z-20">

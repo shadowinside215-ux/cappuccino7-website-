@@ -20,21 +20,35 @@ export default function Hero() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const sanitizeMediaUrl = (url: unknown): string | null => {
+    if (!url || typeof url !== 'string') return null;
+    const trimmed = url.trim();
+    if (trimmed.length === 0 || trimmed.includes('1554118811-1e0d58224f24')) return null;
+    return trimmed;
+  };
+
+  useEffect(() => {
+    const cachedHeroImage = localStorage.getItem('heroImage');
+    if (cachedHeroImage && cachedHeroImage.includes('1554118811-1e0d58224f24')) {
+      localStorage.removeItem('heroImage');
+    }
+  }, []);
+
   useEffect(() => {
     if (settings?.heroVideo) localStorage.setItem('heroVideo', settings.heroVideo);
-    if (settings?.heroImage) localStorage.setItem('heroImage', settings.heroImage);
+    const validHeroImg = sanitizeMediaUrl(settings?.heroImage);
+    if (validHeroImg) {
+      localStorage.setItem('heroImage', validHeroImg);
+    } else if (settings?.heroImage && typeof settings.heroImage === 'string' && settings.heroImage.includes('1554118811-1e0d58224f24')) {
+      localStorage.removeItem('heroImage');
+    }
   }, [settings?.heroVideo, settings?.heroImage]);
 
   const title = settings?.heroTitle || t('hero.title');
   const subtitle = settings?.heroSubtitle || t('hero.subtitle');
-  const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=1920';
-  const image = (typeof settings?.heroImage === 'string' && settings.heroImage.trim()) || 
-                (typeof localStorage.getItem('heroImage') === 'string' && localStorage.getItem('heroImage')?.trim()) || 
-                DEFAULT_HERO_IMAGE;
+  const image = sanitizeMediaUrl(settings?.heroImage) || sanitizeMediaUrl(localStorage.getItem('heroImage')) || null;
 
-  let rawVideo = (typeof settings?.heroVideo === 'string' && settings.heroVideo.trim()) || 
-                 (typeof localStorage.getItem('heroVideo') === 'string' && localStorage.getItem('heroVideo')?.trim()) || 
-                 '';
+  let rawVideo = sanitizeMediaUrl(settings?.heroVideo) || sanitizeMediaUrl(localStorage.getItem('heroVideo')) || '';
   if (rawVideo && rawVideo.includes('cloudinary.com') && rawVideo.includes('/upload/') && !rawVideo.includes('f_auto')) {
     rawVideo = rawVideo.replace('/upload/', '/upload/f_auto,q_auto/');
   }
@@ -44,16 +58,15 @@ export default function Hero() {
   const objectFit = (isMobile && settings?.mobileVideoFit === 'contain') ? 'contain' : 'cover';
 
   return (
-    <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden [perspective:1000px]">
+    <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden [perspective:1000px] bg-espresso-dark">
       <motion.div
         style={{ y, scale }}
-        className="absolute inset-0 z-0 origin-center"
+        className="absolute inset-0 z-0 origin-center bg-espresso-dark"
       >
         {video ? (
           <video
             style={{ objectPosition: objPos }}
             src={video}
-            poster={image || undefined}
             preload="auto"
             autoPlay
             loop
@@ -61,7 +74,7 @@ export default function Hero() {
             playsInline
             className={`w-full h-full ${objectFit === 'contain' ? 'object-contain bg-black' : 'object-cover'} transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none`}
           />
-        ) : (
+        ) : image ? (
           <img
             style={{ objectPosition: objPos }}
             src={image}
@@ -69,6 +82,8 @@ export default function Hero() {
             className={`w-full h-full ${objectFit === 'contain' ? 'object-contain bg-black' : 'object-cover'} scale-[1.05] md:scale-[1.10] origin-center transition-opacity duration-500 ${isUploading ? 'opacity-50' : 'opacity-100'} pointer-events-none`}
             referrerPolicy="no-referrer"
           />
+        ) : (
+          <div className="w-full h-full bg-[#14100e]" />
         )}
         {video ? (
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/30 pointer-events-none" />
